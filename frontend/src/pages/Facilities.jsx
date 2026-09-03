@@ -185,6 +185,8 @@ function Facilities() {
 
             <div className="facilities-list">
               <h2>All Facilities</h2>
+              {facilities.length === 0 && <p className="dashboard-loading">No facilities yet.</p>}
+              {facilities.length > 0 && (
               <ul>
                 {facilities.map((facility) => {
                   const availability = availabilityByFacility[facility.id];
@@ -229,22 +231,28 @@ function Facilities() {
                               <>
                                 <div className="availability-section">
                                   <h3 className="availability-section-title">Medicines</h3>
-                                  <p className="medicines-summary">
-                                    {medicinesInStock}/{medicines.length} medicines available
-                                  </p>
-                                  <ul className="medicines-list">
-                                    {medicines.map((med) => (
-                                      <li key={med.id} className="medicine-item">
-                                        <span className={med.in_stock ? 'medicine-check' : 'medicine-cross'}>
-                                          {med.in_stock ? '✓' : '✕'}
-                                        </span>
-                                        <span>{med.medicine_name}</span>
-                                        {!med.in_stock && (
-                                          <span className="medicine-unavailable-badge">Not available</span>
-                                        )}
-                                      </li>
-                                    ))}
-                                  </ul>
+                                  {medicines.length === 0 ? (
+                                    <p className="dashboard-loading">No medicines recorded yet.</p>
+                                  ) : (
+                                    <>
+                                      <p className="medicines-summary">
+                                        {medicinesInStock}/{medicines.length} medicines available
+                                      </p>
+                                      <ul className="medicines-list">
+                                        {medicines.map((med) => (
+                                          <li key={med.id} className="medicine-item">
+                                            <span className={med.in_stock ? 'medicine-check' : 'medicine-cross'}>
+                                              {med.in_stock ? '✓' : '✕'}
+                                            </span>
+                                            <span>{med.medicine_name}</span>
+                                            {!med.in_stock && (
+                                              <span className="medicine-unavailable-badge">Not available</span>
+                                            )}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </>
+                                  )}
                                 </div>
 
                                 <div className="availability-section">
@@ -298,6 +306,7 @@ function Facilities() {
                   );
                 })}
               </ul>
+              )}
             </div>
           </>
         )}

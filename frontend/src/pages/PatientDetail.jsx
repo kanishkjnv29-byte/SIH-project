@@ -31,13 +31,18 @@ function PatientDetail() {
 
   const [facilities, setFacilities] = useState([]);
   const [referrals, setReferrals] = useState(null);
+  const [referralsError, setReferralsError] = useState('');
   const [selectedFacilityId, setSelectedFacilityId] = useState('');
   const [reason, setReason] = useState('');
   const [referring, setReferring] = useState(false);
   const [referralError, setReferralError] = useState('');
   const [referralSuccess, setReferralSuccess] = useState('');
+  const [referralWarning, setReferralWarning] = useState('');
+  const [updatingStatusId, setUpdatingStatusId] = useState(null);
+  const [statusUpdateError, setStatusUpdateError] = useState({});
 
   const [reports, setReports] = useState(null);
+  const [reportsError, setReportsError] = useState('');
   const [reportFile, setReportFile] = useState(null);
   const [uploadingReport, setUploadingReport] = useState(false);
   const [reportError, setReportError] = useState('');
@@ -88,32 +93,34 @@ function PatientDetail() {
   }
 
   async function loadReferrals(token) {
+    setReferralsError('');
     try {
       const res = await fetch(`${PATIENTS_URL}/${id}/referrals`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
-        setReferrals([]);
+        setReferralsError("Couldn't load referral history — try refreshing.");
         return;
       }
       setReferrals(await res.json());
     } catch {
-      setReferrals([]);
+      setReferralsError("Couldn't load referral history — try refreshing.");
     }
   }
 
   async function loadReports(token) {
+    setReportsError('');
     try {
       const res = await fetch(`${PATIENTS_URL}/${id}/reports`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
-        setReports([]);
+        setReportsError("Couldn't load reports — try refreshing.");
         return;
       }
       setReports(await res.json());
     } catch {
-      setReports([]);
+      setReportsError("Couldn't load reports — try refreshing.");
     }
   }
 
@@ -165,6 +172,7 @@ function PatientDetail() {
     e.preventDefault();
     setReferralError('');
     setReferralSuccess('');
+    setReferralWarning('');
 
     if (!selectedFacilityId) {
       setReferralError('Please select a facility');
@@ -172,6 +180,10 @@ function PatientDetail() {
     }
     if (!reason.trim()) {
       setReferralError('Reason for referral is required');
+      return;
+    }
+    if (reason.trim().length > 1000) {
+      setReferralError('Reason must be 1000 characters or fewer');
       return;
     }
 
@@ -207,6 +219,11 @@ function PatientDetail() {
       }
 
       setReferralSuccess(`Referred to ${data.facility_name} — status: ${data.status}`);
+      if (data.followup_created === false) {
+        setReferralWarning(
+          'Referral sent, but the automatic follow-up task failed to create — please add one manually.'
+        );
+      }
       setSelectedFacilityId('');
       setReason('');
       loadReferrals(token);
@@ -214,6 +231,43 @@ function PatientDetail() {
       setReferralError('Could not reach the server. Please try again.');
     } finally {
       setReferring(false);
+    }
+  }
+
+  async function handleUpdateReferralStatus(referralId, newStatus) {
+    const token = getToken();
+    if (!token) return;
+
+    setUpdatingStatusId(referralId);
+    setStatusUpdateError((prev) => ({ ...prev, [referralId]: '' }));
+    try {
+      const res = await fetch(`${REFERRALS_URL}/${referralId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/login', { replace: true });
+        return;
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatusUpdateError((prev) => ({ ...prev, [referralId]: data.error || 'Something went wrong. Please try again.' }));
+        return;
+      }
+
+      setReferrals((prev) => prev.map((r) => (r.id === referralId ? { ...r, ...data } : r)));
+    } catch {
+      setStatusUpdateError((prev) => ({ ...prev, [referralId]: 'Could not reach the server. Please try again.' }));
+    } finally {
+      setUpdatingStatusId(null);
     }
   }
 
@@ -366,6 +420,7 @@ function PatientDetail() {
 
             {referralError && <p className="form-error">{referralError}</p>}
             {referralSuccess && <p className="form-success">{referralSuccess}</p>}
+            {referralWarning && <p className="form-warning">{referralWarning}</p>}
 
             <button type="submit" className="primary-button" disabled={referring}>
               {referring ? 'Sending...' : 'Send Referral'}
@@ -376,11 +431,12 @@ function PatientDetail() {
         <div className="referral-history">
           <h2>Referral History</h2>
 
-          {referrals === null && <p className="dashboard-loading">Loading...</p>}
-          {referrals !== null && referrals.length === 0 && (
+          {referralsError && <p className="form-error">{referralsError}</p>}
+          {!referralsError && referrals === null && <p className="dashboard-loading">Loading...</p>}
+          {!referralsError && referrals !== null && referrals.length === 0 && (
             <p className="dashboard-loading">No referrals yet.</p>
           )}
-          {referrals !== null && referrals.length > 0 && (
+          {!referralsError && referrals !== null && referrals.length > 0 && (
             <ul className="referral-list">
               {referrals.map((referral) => (
                 <li key={referral.id} className="referral-list-item">
@@ -403,6 +459,30 @@ function PatientDetail() {
                       Followed up on {formatDate(referral.follow_up_completed_at)}:{' '}
                       {referral.follow_up_notes || 'No notes added.'}
                     </p>
+                  )}
+
+                  {referral.status !== 'COMPLETED' && (
+                    <div className="referral-status-actions">
+                      {referral.status === 'PENDING' && (
+                        <button
+                          type="button"
+                          disabled={updatingStatusId === referral.id}
+                          onClick={() => handleUpdateReferralStatus(referral.id, 'ACKNOWLEDGED')}
+                        >
+                          Mark Acknowledged
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        disabled={updatingStatusId === referral.id}
+                        onClick={() => handleUpdateReferralStatus(referral.id, 'COMPLETED')}
+                      >
+                        Mark Completed
+                      </button>
+                    </div>
+                  )}
+                  {statusUpdateError[referral.id] && (
+                    <p className="form-error">{statusUpdateError[referral.id]}</p>
                   )}
                 </li>
               ))}
@@ -437,11 +517,12 @@ function PatientDetail() {
         <div className="reports-list">
           <h2>Reports & Prescriptions</h2>
 
-          {reports === null && <p className="dashboard-loading">Loading...</p>}
-          {reports !== null && reports.length === 0 && (
+          {reportsError && <p className="form-error">{reportsError}</p>}
+          {!reportsError && reports === null && <p className="dashboard-loading">Loading...</p>}
+          {!reportsError && reports !== null && reports.length === 0 && (
             <p className="dashboard-loading">No reports uploaded yet.</p>
           )}
-          {reports !== null && reports.length > 0 && (
+          {!reportsError && reports !== null && reports.length > 0 && (
             <div className="report-card-list">
               {reports.map((report) => (
                 <div key={report.id} className="report-card">

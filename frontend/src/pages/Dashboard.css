@@ -11,6 +11,12 @@
   color: #555;
 }
 
+.dashboard-error {
+  text-align: center;
+  padding: 40px;
+  color: #d33;
+}
+
 .dashboard-header {
   display: flex;
   align-items: center;

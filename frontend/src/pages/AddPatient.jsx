@@ -69,7 +69,24 @@ function AddPatient() {
   function validate() {
     const nextErrors = {};
     if (!form.name.trim()) nextErrors.name = 'Name is required';
-    if (!form.symptoms.trim()) nextErrors.symptoms = 'Symptoms are required';
+
+    if (!form.symptoms.trim()) {
+      nextErrors.symptoms = 'Symptoms are required';
+    } else if (form.symptoms.trim().length > 1000) {
+      nextErrors.symptoms = 'Symptoms must be 1000 characters or fewer';
+    }
+
+    if (form.age !== '') {
+      const ageNum = Number(form.age);
+      if (!Number.isInteger(ageNum) || ageNum < 0 || ageNum > 120) {
+        nextErrors.age = 'Age must be a whole number between 0 and 120';
+      }
+    }
+
+    if (form.phone.trim() !== '' && !/^\d{10}$/.test(form.phone.trim())) {
+      nextErrors.phone = 'Phone number must be exactly 10 digits';
+    }
+
     return nextErrors;
   }
 
@@ -144,7 +161,8 @@ function AddPatient() {
 
           <div className="field">
             <label htmlFor="age">Age</label>
-            <input id="age" name="age" type="number" min="0" value={form.age} onChange={handleChange} />
+            <input id="age" name="age" type="number" min="0" max="120" value={form.age} onChange={handleChange} />
+            {errors.age && <p className="field-error">{errors.age}</p>}
           </div>
 
           <div className="field">
@@ -159,7 +177,16 @@ function AddPatient() {
 
           <div className="field">
             <label htmlFor="phone">Phone</label>
-            <input id="phone" name="phone" type="text" value={form.phone} onChange={handleChange} />
+            <input
+              id="phone"
+              name="phone"
+              type="text"
+              inputMode="numeric"
+              maxLength={10}
+              value={form.phone}
+              onChange={handleChange}
+            />
+            {errors.phone && <p className="field-error">{errors.phone}</p>}
           </div>
 
           <div className="field">

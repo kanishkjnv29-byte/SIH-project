@@ -35,6 +35,10 @@ router.patch('/:id/complete', authenticate, async (req, res) => {
   const { notes } = req.body || {};
   const { id } = req.params;
 
+  if (typeof notes === 'string' && notes.length > 1000) {
+    return res.status(400).json({ error: 'Notes must be 1000 characters or fewer' });
+  }
+
   const { data: followUp, error: fetchError } = await supabase
     .from('follow_ups')
     .select('id, assigned_to')

@@ -28,6 +28,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const [worker, setWorker] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [workerError, setWorkerError] = useState('');
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
@@ -42,12 +43,21 @@ function Dashboard() {
         const res = await fetch(ME_URL, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok) throw new Error('Unauthorized');
-        const data = await res.json();
-        setWorker(data);
+
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          navigate('/login', { replace: true });
+          return;
+        }
+
+        if (!res.ok) {
+          setWorkerError("Couldn't load your info. Try refreshing.");
+          return;
+        }
+
+        setWorker(await res.json());
       } catch {
-        localStorage.removeItem('token');
-        navigate('/login', { replace: true });
+        setWorkerError("Couldn't load your info. Try refreshing.");
         return;
       } finally {
         setLoading(false);
@@ -71,10 +81,18 @@ function Dashboard() {
     navigate('/login', { replace: true });
   }
 
-  if (loading || !worker) {
+  if (loading) {
     return (
       <div className="dashboard-page">
         <p className="dashboard-loading">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!worker) {
+    return (
+      <div className="dashboard-page">
+        <p className="dashboard-error">{workerError || "Couldn't load your info. Try refreshing."}</p>
       </div>
     );
   }

@@ -235,6 +235,31 @@
   font-style: italic;
 }
 
+.referral-status-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.referral-status-actions button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #3366ff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.referral-status-actions button:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.referral-status-actions button:disabled {
+  color: #a3b3e0;
+  cursor: not-allowed;
+}
+
 .reports-section,
 .reports-list {
   background: #fff;

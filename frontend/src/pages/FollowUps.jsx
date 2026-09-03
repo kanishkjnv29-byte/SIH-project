@@ -80,6 +80,11 @@ function FollowUps() {
   }
 
   async function handleSubmitComplete(id) {
+    if (notesDraft.length > 1000) {
+      setSubmitError('Notes must be 1000 characters or fewer');
+      return;
+    }
+
     const token = getToken();
     if (!token) return;
 

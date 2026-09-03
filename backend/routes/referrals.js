@@ -4,6 +4,8 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
 
+const VALID_REFERRAL_STATUSES = ['ACKNOWLEDGED', 'COMPLETED'];
+
 function addDaysAsDateString(days) {
   const d = new Date();
   d.setDate(d.getDate() + days);
@@ -24,6 +26,9 @@ router.post('/', authenticate, async (req, res) => {
   }
   if (typeof reason !== 'string' || !reason.trim()) {
     return res.status(400).json({ error: 'Reason for referral is required' });
+  }
+  if (reason.trim().length > 1000) {
+    return res.status(400).json({ error: 'Reason must be 1000 characters or fewer' });
   }
 
   const { data: patient, error: patientError } = await supabase
@@ -83,6 +88,39 @@ router.post('/', authenticate, async (req, res) => {
 
   const { facility: facilityData, ...referral } = inserted;
   return res.status(201).json({
+    ...referral,
+    facility_name: facilityData?.name || null,
+    facility_type: facilityData?.type || null,
+    referral_created: true,
+    followup_created: !followUpError,
+  });
+});
+
+router.patch('/:id/status', authenticate, async (req, res) => {
+  const { status } = req.body || {};
+  const { id } = req.params;
+
+  if (!VALID_REFERRAL_STATUSES.includes(status)) {
+    return res.status(400).json({ error: `Status must be one of ${VALID_REFERRAL_STATUSES.join(', ')}` });
+  }
+
+  const { data: updated, error } = await supabase
+    .from('referrals')
+    .update({ status })
+    .eq('id', id)
+    .select('*, facility:facilities(name, type)')
+    .maybeSingle();
+
+  if (error) {
+    console.error('Referral status update error:', error.message);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+  if (!updated) {
+    return res.status(404).json({ error: 'Referral not found.' });
+  }
+
+  const { facility: facilityData, ...referral } = updated;
+  return res.json({
     ...referral,
     facility_name: facilityData?.name || null,
     facility_type: facilityData?.type || null,

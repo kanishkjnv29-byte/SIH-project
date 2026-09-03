@@ -37,12 +37,28 @@ router.post('/', authenticate, async (req, res) => {
   if (typeof symptoms !== 'string' || !symptoms.trim()) {
     return res.status(400).json({ error: 'Symptoms are required' });
   }
+  if (symptoms.trim().length > 1000) {
+    return res.status(400).json({ error: 'Symptoms must be 1000 characters or fewer' });
+  }
+
+  let ageValue = null;
+  if (age !== undefined && age !== null && age !== '') {
+    const ageNum = Number(age);
+    if (!Number.isInteger(ageNum) || ageNum < 0 || ageNum > 120) {
+      return res.status(400).json({ error: 'Age must be a whole number between 0 and 120' });
+    }
+    ageValue = ageNum;
+  }
+
+  if (phone !== undefined && phone !== null && phone !== '' && !/^\d{10}$/.test(phone)) {
+    return res.status(400).json({ error: 'Phone number must be exactly 10 digits' });
+  }
 
   const { data: inserted, error } = await supabase
     .from('patients')
     .insert({
       name: name.trim(),
-      age: age || null,
+      age: ageValue,
       gender: gender || null,
       phone: phone || null,
       village: village || null,
@@ -226,7 +242,7 @@ router.post(
       return res.status(500).json({ error: 'Could not upload the file. Please try again.' });
     }
 
-    let aiSummary = 'AI summary could not be generated for this image.';
+    let aiSummary;
     try {
       const result = await reportSummaryModel.generateContent([
         { text: buildReportSummaryPrompt() },
@@ -235,6 +251,7 @@ router.post(
       aiSummary = result.response.text().trim();
     } catch (err) {
       console.error('Gemini report summary error:', err.message);
+      return res.status(502).json({ error: 'Could not analyze this image right now. Please try again.' });
     }
 
     const { data: inserted, error: insertError } = await supabase
