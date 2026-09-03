@@ -53,6 +53,111 @@
   color: #777;
 }
 
+.stats-section {
+  max-width: 700px;
+  margin: 0 auto 40px;
+  text-align: left;
+}
+
+.stat-cards {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.stat-card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a2333;
+}
+
+.stat-card-label {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+}
+
+.stats-breakdown {
+  background: #ffffff;
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.stats-breakdown-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+
+.stats-breakdown .dashboard-loading {
+  padding: 4px 0;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.stat-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stat-bar-row:last-child {
+  margin-bottom: 0;
+}
+
+.stat-bar-label {
+  width: 110px;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #444;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.stat-bar-track {
+  flex: 1;
+  height: 14px;
+  background: #f0f2f4;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.stat-bar-count {
+  width: 24px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+}
+
 .dashboard-actions {
   display: flex;
   gap: 20px;
