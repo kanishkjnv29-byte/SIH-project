@@ -1,0 +1,190 @@
+.patients-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.patients-container h1 {
+  font-size: 1.3rem;
+  color: #1a2333;
+  margin: 0 0 20px;
+}
+
+.patients-table-wrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+}
+
+.patients-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.patients-table th,
+.patients-table td {
+  text-align: left;
+  padding: 12px 16px;
+  white-space: nowrap;
+}
+
+.patients-table th {
+  color: #666;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e6ea;
+}
+
+.patients-row {
+  cursor: pointer;
+  border-bottom: 1px solid #f0f2f4;
+}
+
+.patients-row:last-child {
+  border-bottom: none;
+}
+
+.patients-row:hover {
+  background: #f4f6f8;
+}
+
+.symptoms-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.symptoms-input-row textarea {
+  flex: 1;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 1px solid #cbd2d9;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #1a2333;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.symptoms-input-row textarea:focus {
+  border-color: #3366ff;
+}
+
+.mic-lang-select {
+  flex-shrink: 0;
+  align-self: flex-start;
+  height: 44px;
+  padding: 0 8px;
+  font-size: 0.8rem;
+  border: 1px solid #cbd2d9;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a2333;
+}
+
+.mic-button {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  font-size: 1.2rem;
+  border: 1px solid #cbd2d9;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.mic-button:hover {
+  border-color: #3366ff;
+}
+
+.mic-button.listening {
+  background: #fdecea;
+  border-color: #d33;
+  color: #d33;
+}
+
+.urgency-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.urgency-low {
+  background: #e6f4ea;
+  color: #1a7f37;
+}
+
+.urgency-medium {
+  background: #fff8e6;
+  color: #8a6d00;
+}
+
+.urgency-high {
+  background: #ffe8d1;
+  color: #b35900;
+}
+
+.urgency-emergency {
+  background: #fdecea;
+  color: #d33;
+}
+
+.patient-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px 24px;
+  margin: 16px 0 24px;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.patient-symptoms,
+.triage-section {
+  background: #fff;
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.patient-symptoms p {
+  margin: 8px 0 0;
+  color: #444;
+  white-space: pre-wrap;
+}
+
+.triage-reason {
+  margin: 12px 0 4px;
+  color: #333;
+}
+
+.triage-note {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0;
+}
+
+.primary-button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #3366ff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.primary-button:hover:not(:disabled) {
+  background: #2952cc;
+}
+
+.primary-button:disabled {
+  background: #a3b3e0;
+  cursor: not-allowed;
+}

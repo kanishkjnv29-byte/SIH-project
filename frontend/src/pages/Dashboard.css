@@ -1,0 +1,91 @@
+.dashboard-page {
+  min-height: 100vh;
+  background: #f4f6f8;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+
+.dashboard-loading {
+  text-align: center;
+  padding: 40px;
+  color: #555;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e6ea;
+  padding: 20px 32px;
+}
+
+.dashboard-header h1 {
+  font-size: 1.2rem;
+  margin: 0 0 4px;
+  color: #1a2333;
+}
+
+.dashboard-header p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.dashboard-header button {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #d33;
+  background: #fdecea;
+  border: 1px solid #f5c2c0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dashboard-header button:hover {
+  background: #f9d8d5;
+}
+
+.dashboard-content {
+  padding: 48px 32px;
+  text-align: center;
+  color: #777;
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.dashboard-action {
+  display: inline-block;
+  padding: 20px 32px;
+  min-width: 200px;
+  background: #ffffff;
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  color: #1a2333;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dashboard-action:hover {
+  border-color: #3366ff;
+  color: #3366ff;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #3366ff;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
