@@ -1,9 +1,32 @@
 import { Router } from 'express';
+import multer from 'multer';
 import { supabase } from '../lib/supabaseClient.js';
 import { authenticate } from '../middleware/auth.js';
-import { triageModel, buildTriagePrompt, parseTriageResponse } from '../lib/geminiClient.js';
+import {
+  triageModel,
+  buildTriagePrompt,
+  parseTriageResponse,
+  reportSummaryModel,
+  buildReportSummaryPrompt,
+} from '../lib/geminiClient.js';
 
 const router = Router();
+
+const REPORT_BUCKET = 'patient-reports';
+const SIGNED_URL_TTL_SECONDS = 60 * 60;
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPG and PNG images are allowed'));
+    }
+  },
+});
 
 router.post('/', authenticate, async (req, res) => {
   const { name, age, gender, phone, village, symptoms } = req.body || {};
@@ -157,6 +180,118 @@ router.get('/:id/referrals', authenticate, async (req, res) => {
   });
 
   return res.json(referrals);
+});
+
+router.post(
+  '/:id/reports',
+  authenticate,
+  (req, res, next) => {
+    upload.single('report')(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message || 'Invalid file upload' });
+      }
+      next();
+    });
+  },
+  async (req, res) => {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'A report image is required' });
+    }
+
+    const { data: patient, error: patientError } = await supabase
+      .from('patients')
+      .select('id')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (patientError) {
+      console.error('Report patient lookup error:', patientError.message);
+      return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+    }
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    const safeFilename = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const storagePath = `${id}/${Date.now()}-${safeFilename}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(REPORT_BUCKET)
+      .upload(storagePath, req.file.buffer, { contentType: req.file.mimetype });
+
+    if (uploadError) {
+      console.error('Report storage upload error:', uploadError.message);
+      return res.status(500).json({ error: 'Could not upload the file. Please try again.' });
+    }
+
+    let aiSummary = 'AI summary could not be generated for this image.';
+    try {
+      const result = await reportSummaryModel.generateContent([
+        { text: buildReportSummaryPrompt() },
+        { inlineData: { mimeType: req.file.mimetype, data: req.file.buffer.toString('base64') } },
+      ]);
+      aiSummary = result.response.text().trim();
+    } catch (err) {
+      console.error('Gemini report summary error:', err.message);
+    }
+
+    const { data: inserted, error: insertError } = await supabase
+      .from('patient_reports')
+      .insert({
+        patient_id: id,
+        uploaded_by: req.worker.id,
+        storage_path: storagePath,
+        ai_summary: aiSummary,
+      })
+      .select('*')
+      .single();
+
+    if (insertError) {
+      console.error('Report insert error:', insertError.message);
+      return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+    }
+
+    const { data: signedUrlData, error: signError } = await supabase.storage
+      .from(REPORT_BUCKET)
+      .createSignedUrl(storagePath, SIGNED_URL_TTL_SECONDS);
+
+    if (signError) {
+      console.error('Signed URL error:', signError.message);
+    }
+
+    return res.status(201).json({ ...inserted, signed_url: signedUrlData?.signedUrl || null });
+  }
+);
+
+router.get('/:id/reports', authenticate, async (req, res) => {
+  const { data, error } = await supabase
+    .from('patient_reports')
+    .select('*')
+    .eq('patient_id', req.params.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Reports list error:', error.message);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+  const reportsWithUrls = await Promise.all(
+    data.map(async (report) => {
+      const { data: signedUrlData, error: signError } = await supabase.storage
+        .from(REPORT_BUCKET)
+        .createSignedUrl(report.storage_path, SIGNED_URL_TTL_SECONDS);
+
+      if (signError) {
+        console.error('Signed URL error:', signError.message);
+      }
+
+      return { ...report, signed_url: signedUrlData?.signedUrl || null };
+    })
+  );
+
+  return res.json(reportsWithUrls);
 });
 
 export default router;

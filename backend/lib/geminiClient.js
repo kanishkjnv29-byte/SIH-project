@@ -7,6 +7,18 @@ export const triageModel = genAI.getGenerativeModel({
   generationConfig: { responseMimeType: 'application/json' },
 });
 
+export const reportSummaryModel = genAI.getGenerativeModel({
+  model: 'gemini-3.5-flash-lite',
+});
+
+export function buildReportSummaryPrompt() {
+  return `You are a decision-support tool assisting a trained ASHA or Primary Health Centre (PHC) health worker in rural India. You are NOT providing a diagnosis — you are only helping them quickly understand a document a patient has brought in.
+
+Look at the attached image, which should be a medical report or prescription. Give a short, plain-language summary of what it contains — key findings, medicines listed, or notable values — in 3-4 sentences maximum.
+
+If the image is unclear, blurry, or does not appear to be a medical document at all, say so plainly instead of guessing at its contents.`;
+}
+
 const VALID_URGENCY_LEVELS = ['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY'];
 
 export function buildTriagePrompt({ age, gender, symptoms }) {

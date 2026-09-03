@@ -235,6 +235,60 @@
   font-style: italic;
 }
 
+.reports-section,
+.reports-list {
+  background: #fff;
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.reports-section h2,
+.reports-list h2 {
+  font-size: 1rem;
+  margin: 0 0 16px;
+  color: #1a2333;
+}
+
+.reports-section .field input[type='file'] {
+  padding: 8px 0;
+  border: none;
+  background: none;
+}
+
+.report-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.report-card {
+  display: flex;
+  gap: 16px;
+  border: 1px solid #f0f2f4;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.report-image {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.report-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.report-summary {
+  margin: 0 0 8px;
+  color: #333;
+}
+
 .patient-symptoms p {
   margin: 8px 0 0;
   color: #444;

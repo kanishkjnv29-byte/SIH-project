@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import UrgencyBadge from '../components/UrgencyBadge';
 import ReferralStatusBadge from '../components/ReferralStatusBadge';
@@ -36,6 +36,12 @@ function PatientDetail() {
   const [referring, setReferring] = useState(false);
   const [referralError, setReferralError] = useState('');
   const [referralSuccess, setReferralSuccess] = useState('');
+
+  const [reports, setReports] = useState(null);
+  const [reportFile, setReportFile] = useState(null);
+  const [uploadingReport, setUploadingReport] = useState(false);
+  const [reportError, setReportError] = useState('');
+  const reportFileInputRef = useRef(null);
 
   function getToken() {
     const token = localStorage.getItem('token');
@@ -96,6 +102,21 @@ function PatientDetail() {
     }
   }
 
+  async function loadReports(token) {
+    try {
+      const res = await fetch(`${PATIENTS_URL}/${id}/reports`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        setReports([]);
+        return;
+      }
+      setReports(await res.json());
+    } catch {
+      setReports([]);
+    }
+  }
+
   useEffect(() => {
     const token = getToken();
     if (!token) return;
@@ -103,6 +124,7 @@ function PatientDetail() {
     loadPatient(token);
     loadFacilities(token);
     loadReferrals(token);
+    loadReports(token);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -192,6 +214,52 @@ function PatientDetail() {
       setReferralError('Could not reach the server. Please try again.');
     } finally {
       setReferring(false);
+    }
+  }
+
+  async function handleReportUpload(e) {
+    e.preventDefault();
+    setReportError('');
+
+    if (!reportFile) {
+      setReportError('Please choose an image to upload');
+      return;
+    }
+
+    const token = getToken();
+    if (!token) return;
+
+    setUploadingReport(true);
+    try {
+      const formData = new FormData();
+      formData.append('report', reportFile);
+
+      const res = await fetch(`${PATIENTS_URL}/${id}/reports`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/login', { replace: true });
+        return;
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setReportError(data.error || 'Something went wrong. Please try again.');
+        return;
+      }
+
+      setReports((prev) => [data, ...(prev || [])]);
+      setReportFile(null);
+      if (reportFileInputRef.current) reportFileInputRef.current.value = '';
+    } catch {
+      setReportError('Could not reach the server. Please try again.');
+    } finally {
+      setUploadingReport(false);
     }
   }
 
@@ -339,6 +407,55 @@ function PatientDetail() {
                 </li>
               ))}
             </ul>
+          )}
+        </div>
+
+        <div className="reports-section">
+          <h2>Upload Report or Prescription</h2>
+
+          <form onSubmit={handleReportUpload} noValidate>
+            <div className="field">
+              <label htmlFor="report-file">Image</label>
+              <input
+                id="report-file"
+                ref={reportFileInputRef}
+                type="file"
+                accept="image/jpeg,image/png"
+                capture="environment"
+                onChange={(e) => setReportFile(e.target.files[0] || null)}
+              />
+            </div>
+
+            {reportError && <p className="form-error">{reportError}</p>}
+
+            <button type="submit" className="primary-button" disabled={uploadingReport}>
+              {uploadingReport ? 'Uploading & Analyzing...' : 'Upload & Analyze'}
+            </button>
+          </form>
+        </div>
+
+        <div className="reports-list">
+          <h2>Reports & Prescriptions</h2>
+
+          {reports === null && <p className="dashboard-loading">Loading...</p>}
+          {reports !== null && reports.length === 0 && (
+            <p className="dashboard-loading">No reports uploaded yet.</p>
+          )}
+          {reports !== null && reports.length > 0 && (
+            <div className="report-card-list">
+              {reports.map((report) => (
+                <div key={report.id} className="report-card">
+                  {report.signed_url && (
+                    <img src={report.signed_url} alt="Uploaded report or prescription" className="report-image" />
+                  )}
+                  <div className="report-card-body">
+                    <p className="report-summary">{report.ai_summary}</p>
+                    <p className="triage-note">AI-suggested — please use your clinical judgment.</p>
+                    <span className="referral-list-date">{formatDate(report.created_at)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
