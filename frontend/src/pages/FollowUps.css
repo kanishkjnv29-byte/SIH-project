@@ -1,0 +1,100 @@
+.followup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.followup-card {
+  background: #fff;
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.followup-card.followup-completed {
+  background: #f4f6f8;
+  color: #888;
+}
+
+.followup-card.followup-completed .followup-patient,
+.followup-card.followup-completed .followup-facility,
+.followup-card.followup-completed .followup-due {
+  color: #999;
+}
+
+.followup-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.followup-patient {
+  font-weight: 600;
+  color: #1a2333;
+}
+
+.followup-facility {
+  margin: 0 0 4px;
+  color: #444;
+}
+
+.followup-due {
+  margin: 0 0 12px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.followup-due.followup-overdue {
+  color: #d33;
+  font-weight: 700;
+}
+
+.followup-notes {
+  margin: 8px 0 0;
+  color: #666;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.followup-complete-form {
+  margin-top: 8px;
+}
+
+.followup-complete-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  font-family: inherit;
+  padding: 10px 12px;
+  border: 1px solid #cbd2d9;
+  border-radius: 8px;
+  outline: none;
+  resize: vertical;
+  margin-bottom: 10px;
+}
+
+.followup-complete-form textarea:focus {
+  border-color: #3366ff;
+}
+
+.followup-complete-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.secondary-button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  background: #fff;
+  border: 1px solid #cbd2d9;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  border-color: #999;
+}

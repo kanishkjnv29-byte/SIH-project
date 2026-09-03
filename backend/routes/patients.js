@@ -128,4 +128,35 @@ router.post('/:id/triage', authenticate, async (req, res) => {
   return res.json({ ...patientData, created_by_name: created_by_worker?.name || null });
 });
 
+router.get('/:id/referrals', authenticate, async (req, res) => {
+  const { data, error } = await supabase
+    .from('referrals')
+    .select(
+      '*, facility:facilities(name, type), referred_by_worker:health_workers(name), follow_ups(status, due_date, notes, completed_at)'
+    )
+    .eq('patient_id', req.params.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Patient referrals list error:', error.message);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+  const referrals = data.map(({ facility, referred_by_worker, follow_ups, ...referral }) => {
+    const followUp = Array.isArray(follow_ups) ? follow_ups[0] : follow_ups;
+    return {
+      ...referral,
+      facility_name: facility?.name || null,
+      facility_type: facility?.type || null,
+      referred_by_name: referred_by_worker?.name || null,
+      follow_up_status: followUp?.status || null,
+      follow_up_due_date: followUp?.due_date || null,
+      follow_up_notes: followUp?.notes || null,
+      follow_up_completed_at: followUp?.completed_at || null,
+    };
+  });
+
+  return res.json(referrals);
+});
+
 export default router;

@@ -5,6 +5,8 @@ import cors from 'cors';
 import authRouter from './routes/auth.js';
 import patientsRouter from './routes/patients.js';
 import facilitiesRouter from './routes/facilities.js';
+import referralsRouter from './routes/referrals.js';
+import followUpsRouter from './routes/followUps.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +21,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/patients', patientsRouter);
 app.use('/api/facilities', facilitiesRouter);
+app.use('/api/referrals', referralsRouter);
+app.use('/api/follow-ups', followUpsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

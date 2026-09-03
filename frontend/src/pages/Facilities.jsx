@@ -6,6 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { FACILITY_TYPE_LABELS, FACILITY_TYPE_COLORS } from '../constants/facilityTypes';
 import './Dashboard.css';
 import './Patients.css';
 import './Facilities.css';
@@ -21,24 +22,10 @@ L.Icon.Default.mergeOptions({
 const FACILITIES_URL = 'http://localhost:5000/api/facilities';
 const GORAKHPUR_CENTER = [26.76, 83.37];
 
-const TYPE_COLORS = {
-  SUB_CENTRE: '#1a7f37',
-  PHC: '#3366ff',
-  CHC: '#b35900',
-  DISTRICT_HOSPITAL: '#d33',
-};
-
-const TYPE_LABELS = {
-  SUB_CENTRE: 'Sub-Centre',
-  PHC: 'PHC',
-  CHC: 'CHC',
-  DISTRICT_HOSPITAL: 'District Hospital',
-};
-
 const iconCache = {};
 function iconForType(type) {
   if (!iconCache[type]) {
-    const color = TYPE_COLORS[type] || '#666';
+    const color = FACILITY_TYPE_COLORS[type] || '#666';
     iconCache[type] = L.divIcon({
       className: 'facility-marker-icon',
       html: `<span style="background:${color}"></span>`,
@@ -117,7 +104,7 @@ function Facilities() {
                       <Popup>
                         <strong>{facility.name}</strong>
                         <br />
-                        {TYPE_LABELS[facility.type] || facility.type}
+                        {FACILITY_TYPE_LABELS[facility.type] || facility.type}
                         <br />
                         {facility.block}
                         {facility.phone && (
@@ -139,12 +126,12 @@ function Facilities() {
                   <li key={facility.id} className="facility-list-item">
                     <span
                       className="facility-dot"
-                      style={{ background: TYPE_COLORS[facility.type] || '#666' }}
+                      style={{ background: FACILITY_TYPE_COLORS[facility.type] || '#666' }}
                     />
                     <div>
                       <strong>{facility.name}</strong>
                       <div className="facility-meta">
-                        {TYPE_LABELS[facility.type] || facility.type} · {facility.block || 'Unknown block'}
+                        {FACILITY_TYPE_LABELS[facility.type] || facility.type} · {facility.block || 'Unknown block'}
                         {facility.phone ? ` · ${facility.phone}` : ''}
                       </div>
                     </div>

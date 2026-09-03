@@ -71,6 +71,9 @@ function Dashboard() {
           <Link to="/facilities" className="dashboard-action">
             Facilities
           </Link>
+          <Link to="/follow-ups" className="dashboard-action">
+            My Follow-ups
+          </Link>
         </div>
       </main>
     </div>

@@ -6,6 +6,7 @@ import AddPatient from './pages/AddPatient';
 import ViewPatients from './pages/ViewPatients';
 import PatientDetail from './pages/PatientDetail';
 import Facilities from './pages/Facilities';
+import FollowUps from './pages/FollowUps';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/patients/:id" element={<PatientDetail />} />
         <Route path="/patients" element={<ViewPatients />} />
         <Route path="/facilities" element={<Facilities />} />
+        <Route path="/follow-ups" element={<FollowUps />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
