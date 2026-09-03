@@ -42,6 +42,70 @@ function Facilities() {
   const [facilities, setFacilities] = useState(null);
   const [error, setError] = useState('');
 
+  const [expandedFacilityId, setExpandedFacilityId] = useState(null);
+  const [availabilityByFacility, setAvailabilityByFacility] = useState({});
+  const [availabilityLoading, setAvailabilityLoading] = useState({});
+  const [availabilityError, setAvailabilityError] = useState({});
+
+  async function loadAvailability(facilityId) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login', { replace: true });
+      return;
+    }
+
+    setAvailabilityLoading((prev) => ({ ...prev, [facilityId]: true }));
+    setAvailabilityError((prev) => ({ ...prev, [facilityId]: '' }));
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const [medicinesRes, staffRes, equipmentRes] = await Promise.all([
+        fetch(`${FACILITIES_URL}/${facilityId}/medicines`, { headers }),
+        fetch(`${FACILITIES_URL}/${facilityId}/staff`, { headers }),
+        fetch(`${FACILITIES_URL}/${facilityId}/equipment`, { headers }),
+      ]);
+
+      if (medicinesRes.status === 401 || staffRes.status === 401 || equipmentRes.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/login', { replace: true });
+        return;
+      }
+
+      if (!medicinesRes.ok || !staffRes.ok || !equipmentRes.ok) {
+        setAvailabilityError((prev) => ({
+          ...prev,
+          [facilityId]: 'Could not load availability. Please try again.',
+        }));
+        return;
+      }
+
+      const [medicines, staff, equipment] = await Promise.all([
+        medicinesRes.json(),
+        staffRes.json(),
+        equipmentRes.json(),
+      ]);
+
+      setAvailabilityByFacility((prev) => ({ ...prev, [facilityId]: { medicines, staff, equipment } }));
+    } catch {
+      setAvailabilityError((prev) => ({
+        ...prev,
+        [facilityId]: 'Could not reach the server. Please try again.',
+      }));
+    } finally {
+      setAvailabilityLoading((prev) => ({ ...prev, [facilityId]: false }));
+    }
+  }
+
+  function handleToggleAvailability(facilityId) {
+    if (expandedFacilityId === facilityId) {
+      setExpandedFacilityId(null);
+      return;
+    }
+    setExpandedFacilityId(facilityId);
+    if (!availabilityByFacility[facilityId]) {
+      loadAvailability(facilityId);
+    }
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -122,21 +186,117 @@ function Facilities() {
             <div className="facilities-list">
               <h2>All Facilities</h2>
               <ul>
-                {facilities.map((facility) => (
-                  <li key={facility.id} className="facility-list-item">
-                    <span
-                      className="facility-dot"
-                      style={{ background: FACILITY_TYPE_COLORS[facility.type] || '#666' }}
-                    />
-                    <div>
-                      <strong>{facility.name}</strong>
-                      <div className="facility-meta">
-                        {FACILITY_TYPE_LABELS[facility.type] || facility.type} · {facility.block || 'Unknown block'}
-                        {facility.phone ? ` · ${facility.phone}` : ''}
+                {facilities.map((facility) => {
+                  const availability = availabilityByFacility[facility.id];
+                  const isExpanded = expandedFacilityId === facility.id;
+
+                  const medicines = availability?.medicines || [];
+                  const staff = availability?.staff || [];
+                  const equipment = availability?.equipment || [];
+
+                  const medicinesInStock = medicines.filter((m) => m.in_stock).length;
+                  const specialtiesPresent = staff.filter((s) => s.available_count > 0).length;
+                  const equipmentAvailable = equipment.filter((e) => e.available).length;
+
+                  return (
+                    <li key={facility.id} className="facility-list-item">
+                      <span
+                        className="facility-dot"
+                        style={{ background: FACILITY_TYPE_COLORS[facility.type] || '#666' }}
+                      />
+                      <div className="facility-list-content">
+                        <strong>{facility.name}</strong>
+                        <div className="facility-meta">
+                          {FACILITY_TYPE_LABELS[facility.type] || facility.type} · {facility.block || 'Unknown block'}
+                          {facility.phone ? ` · ${facility.phone}` : ''}
+                        </div>
+
+                        <button
+                          type="button"
+                          className="link-button"
+                          onClick={() => handleToggleAvailability(facility.id)}
+                        >
+                          {isExpanded ? 'Hide Availability' : 'View Availability'}
+                        </button>
+
+                        {isExpanded && (
+                          <div className="availability-panel">
+                            {availabilityLoading[facility.id] && <p className="dashboard-loading">Loading...</p>}
+                            {availabilityError[facility.id] && (
+                              <p className="form-error">{availabilityError[facility.id]}</p>
+                            )}
+                            {availability && (
+                              <>
+                                <div className="availability-section">
+                                  <h3 className="availability-section-title">Medicines</h3>
+                                  <p className="medicines-summary">
+                                    {medicinesInStock}/{medicines.length} medicines available
+                                  </p>
+                                  <ul className="medicines-list">
+                                    {medicines.map((med) => (
+                                      <li key={med.id} className="medicine-item">
+                                        <span className={med.in_stock ? 'medicine-check' : 'medicine-cross'}>
+                                          {med.in_stock ? '✓' : '✕'}
+                                        </span>
+                                        <span>{med.medicine_name}</span>
+                                        {!med.in_stock && (
+                                          <span className="medicine-unavailable-badge">Not available</span>
+                                        )}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+
+                                <div className="availability-section">
+                                  <h3 className="availability-section-title">Specialists & Staff</h3>
+                                  <p className="medicines-summary">
+                                    {specialtiesPresent}/{staff.length} specialties present
+                                  </p>
+                                  <ul className="medicines-list">
+                                    {staff.map((s) => (
+                                      <li key={s.id} className="medicine-item">
+                                        <span className={s.available_count === 0 ? 'staff-name-unavailable' : ''}>
+                                          {s.specialty}
+                                        </span>
+                                        <span
+                                          className={`staff-count-badge${
+                                            s.available_count === 0 ? ' staff-count-zero' : ''
+                                          }`}
+                                        >
+                                          {s.available_count} available
+                                        </span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+
+                                <div className="availability-section">
+                                  <h3 className="availability-section-title">Equipment</h3>
+                                  <p className="medicines-summary">
+                                    {equipmentAvailable}/{equipment.length} equipment available
+                                  </p>
+                                  <ul className="medicines-list">
+                                    {equipment.map((eq) => (
+                                      <li key={eq.id} className="medicine-item">
+                                        <span className={eq.available ? 'medicine-check' : 'medicine-cross'}>
+                                          {eq.available ? '✓' : '✕'}
+                                        </span>
+                                        <span>{eq.equipment_name}</span>
+                                        {!eq.available && (
+                                          <span className="medicine-unavailable-badge">Not available</span>
+                                        )}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </>

@@ -62,3 +62,111 @@
   color: #666;
   margin-top: 2px;
 }
+
+.facility-list-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.link-button {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #3366ff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+.availability-panel {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: #f9fafb;
+  border: 1px solid #eceff1;
+  border-radius: 8px;
+}
+
+.availability-section {
+  margin-bottom: 16px;
+}
+
+.availability-section:last-child {
+  margin-bottom: 0;
+}
+
+.availability-section-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+
+.medicines-summary {
+  margin: 0 0 8px;
+  font-weight: 600;
+  color: #1a2333;
+  font-size: 0.9rem;
+}
+
+.medicines-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.medicine-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.medicine-check {
+  color: #1a7f37;
+  font-weight: 700;
+}
+
+.medicine-cross {
+  color: #999;
+  font-weight: 700;
+}
+
+.medicine-unavailable-badge {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #888;
+  background: #eceff1;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.staff-name-unavailable {
+  color: #999;
+}
+
+.staff-count-badge {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #1e50c9;
+  background: #e3edff;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.staff-count-badge.staff-count-zero {
+  color: #888;
+  background: #eceff1;
+}
