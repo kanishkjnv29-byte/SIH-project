@@ -1,15 +1,39 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageToggle from '../components/LanguageToggle';
+import { ROLE_LABEL_KEYS } from '../i18n/roleLabels';
 import './Dashboard.css';
 
 const ME_URL = 'http://localhost:5000/api/auth/me';
 const STATS_URL = 'http://localhost:5000/api/stats';
+const FOLLOW_UPS_URL = 'http://localhost:5000/api/follow-ups';
 
 const URGENCY_ORDER = ['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY'];
-const URGENCY_COLORS = { LOW: '#1a7f37', MEDIUM: '#e0a800', HIGH: '#e07b00', EMERGENCY: '#d33' };
+const URGENCY_COLOR_VARS = {
+  LOW: 'var(--color-urgency-low)',
+  MEDIUM: 'var(--color-urgency-medium)',
+  HIGH: 'var(--color-urgency-high)',
+  EMERGENCY: 'var(--color-urgency-emergency)',
+};
+const URGENCY_LABEL_KEYS = {
+  LOW: 'low',
+  MEDIUM: 'medium',
+  HIGH: 'high',
+  EMERGENCY: 'emergency',
+};
 
 const REFERRAL_STATUS_ORDER = ['PENDING', 'ACKNOWLEDGED', 'COMPLETED'];
-const REFERRAL_STATUS_COLORS = { PENDING: '#888', ACKNOWLEDGED: '#1e50c9', COMPLETED: '#1a7f37' };
+const REFERRAL_STATUS_COLOR_VARS = {
+  PENDING: 'var(--color-ink-muted)',
+  ACKNOWLEDGED: 'var(--color-primary)',
+  COMPLETED: 'var(--color-urgency-low)',
+};
+const REFERRAL_STATUS_LABEL_KEYS = {
+  PENDING: 'pending',
+  ACKNOWLEDGED: 'acknowledged',
+  COMPLETED: 'completed',
+};
 
 function StatBar({ label, count, total, color }) {
   const pct = total > 0 ? (count / total) * 100 : 0;
@@ -24,12 +48,19 @@ function StatBar({ label, count, total, color }) {
   );
 }
 
+function formatDueDate(dateStr) {
+  if (!dateStr) return '';
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString();
+}
+
 function Dashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [worker, setWorker] = useState(null);
   const [loading, setLoading] = useState(true);
   const [workerError, setWorkerError] = useState('');
   const [stats, setStats] = useState(null);
+  const [dueToday, setDueToday] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -73,6 +104,24 @@ function Dashboard() {
       } catch {
         // Stats are a nice-to-have on the dashboard; fail silently if unreachable.
       }
+
+      try {
+        const followUpsRes = await fetch(FOLLOW_UPS_URL, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (followUpsRes.ok) {
+          const all = await followUpsRes.json();
+          const pending = all
+            .filter((f) => f.status === 'PENDING')
+            .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))
+            .slice(0, 3);
+          setDueToday(pending);
+        } else {
+          setDueToday([]);
+        }
+      } catch {
+        setDueToday([]);
+      }
     })();
   }, [navigate]);
 
@@ -83,7 +132,7 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <div className="dashboard-page">
+      <div className="gs-dashboard-page">
         <p className="dashboard-loading">Loading...</p>
       </div>
     );
@@ -91,7 +140,7 @@ function Dashboard() {
 
   if (!worker) {
     return (
-      <div className="dashboard-page">
+      <div className="gs-dashboard-page">
         <p className="dashboard-error">{workerError || "Couldn't load your info. Try refreshing."}</p>
       </div>
     );
@@ -102,87 +151,131 @@ function Dashboard() {
     : 0;
 
   return (
-    <div className="dashboard-page">
+    <div className="gs-dashboard-page">
       <header className="dashboard-header">
-        <div>
-          <h1>{worker.name}</h1>
-          <p>
-            {worker.role} · {worker.facility_name || 'No facility set'}
-          </p>
+        <div className="dashboard-header-inner">
+          <div>
+            <h1>{worker.name}</h1>
+            <p>
+              {t(ROLE_LABEL_KEYS[worker.role] || worker.role)} · {worker.facility_name || 'No facility set'}
+            </p>
+          </div>
+          <div className="dashboard-header-actions">
+            <LanguageToggle className="language-toggle--on-dark" />
+            <button type="button" className="logout-button" onClick={handleLogout}>
+              {t('logout')}
+            </button>
+          </div>
         </div>
-        <button type="button" onClick={handleLogout}>
-          Log Out
-        </button>
       </header>
 
       <main className="dashboard-content">
+        <nav className="dashboard-actions">
+          <Link to="/patients/new" className="dashboard-action">
+            {t('addNewPatient')}
+          </Link>
+          <Link to="/patients" className="dashboard-action">
+            {t('viewPatients')}
+          </Link>
+          <Link to="/facilities" className="dashboard-action">
+            {t('facilities')}
+          </Link>
+          <Link to="/follow-ups" className="dashboard-action">
+            {t('myFollowups')}
+          </Link>
+        </nav>
+
+        <section className="due-today-section">
+          <h2 className="section-title">{t('dueToday')}</h2>
+
+          {dueToday === null && <p className="dashboard-loading">Loading...</p>}
+
+          {dueToday !== null && dueToday.length === 0 && (
+            <p className="due-today-empty">{t('nothingDueToday')}</p>
+          )}
+
+          {dueToday !== null && dueToday.length > 0 && (
+            <>
+              <div className="due-today-list">
+                {dueToday.map((item) => (
+                  <div
+                    key={item.id}
+                    className="due-today-card"
+                    style={{
+                      borderLeftColor: item.patient_urgency_level
+                        ? URGENCY_COLOR_VARS[item.patient_urgency_level]
+                        : 'var(--color-primary)',
+                    }}
+                  >
+                    <span className="due-today-patient">{item.patient_name || 'Unknown patient'}</span>
+                    <span className="due-today-facility">
+                      {t('referredTo')} {item.facility_name || 'Unknown facility'}
+                    </span>
+                    <span className="due-today-date">
+                      {t('due')} {formatDueDate(item.due_date)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <Link to="/follow-ups" className="due-today-view-all">
+                {t('viewAllFollowups')} →
+              </Link>
+            </>
+          )}
+        </section>
+
         {stats && (
-          <div className="stats-section">
+          <section className="stats-section">
             <div className="stat-cards">
               <div className="stat-card">
                 <span className="stat-card-value">{stats.total_patients}</span>
-                <span className="stat-card-label">Total Patients</span>
+                <span className="stat-card-label">{t('totalPatients')}</span>
               </div>
               <div className="stat-card">
                 <span className="stat-card-value">{stats.total_referrals}</span>
-                <span className="stat-card-label">Total Referrals</span>
+                <span className="stat-card-label">{t('totalReferrals')}</span>
               </div>
               <div className="stat-card">
                 <span className="stat-card-value">{stats.my_pending_followups}</span>
-                <span className="stat-card-label">My Pending Follow-ups</span>
+                <span className="stat-card-label">{t('myPendingFollowups')}</span>
               </div>
             </div>
 
             <div className="stats-breakdown">
-              <h3 className="stats-breakdown-title">Triage Urgency</h3>
+              <h3 className="stats-breakdown-title">{t('triageUrgency')}</h3>
               {totalTriaged === 0 ? (
                 <p className="dashboard-loading">No data yet</p>
               ) : (
                 URGENCY_ORDER.map((level) => (
                   <StatBar
                     key={level}
-                    label={level}
+                    label={t(URGENCY_LABEL_KEYS[level])}
                     count={stats.urgency_breakdown[level]}
                     total={totalTriaged}
-                    color={URGENCY_COLORS[level]}
+                    color={URGENCY_COLOR_VARS[level]}
                   />
                 ))
               )}
             </div>
 
             <div className="stats-breakdown">
-              <h3 className="stats-breakdown-title">Referral Status</h3>
+              <h3 className="stats-breakdown-title">{t('referralStatus')}</h3>
               {stats.total_referrals === 0 ? (
                 <p className="dashboard-loading">No data yet</p>
               ) : (
                 REFERRAL_STATUS_ORDER.map((status) => (
                   <StatBar
                     key={status}
-                    label={status}
+                    label={t(REFERRAL_STATUS_LABEL_KEYS[status])}
                     count={stats.referral_status_breakdown[status]}
                     total={stats.total_referrals}
-                    color={REFERRAL_STATUS_COLORS[status]}
+                    color={REFERRAL_STATUS_COLOR_VARS[status]}
                   />
                 ))
               )}
             </div>
-          </div>
+          </section>
         )}
-
-        <div className="dashboard-actions">
-          <Link to="/patients/new" className="dashboard-action">
-            Add New Patient
-          </Link>
-          <Link to="/patients" className="dashboard-action">
-            View Patients
-          </Link>
-          <Link to="/facilities" className="dashboard-action">
-            Facilities
-          </Link>
-          <Link to="/follow-ups" className="dashboard-action">
-            My Follow-ups
-          </Link>
-        </div>
       </main>
     </div>
   );

@@ -1,0 +1,201 @@
+.gs-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.gs-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gs-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.gs-brand {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: -0.2px;
+}
+
+.gs-subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--color-ink-muted);
+}
+
+.gs-card {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(28, 27, 23, 0.06);
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.gs-card-topbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: -8px 0 12px;
+}
+
+.gs-card h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 24px;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+.gs-field {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gs-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 6px;
+}
+
+.gs-field input,
+.gs-field select {
+  font-size: 1rem;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  outline: none;
+  background: var(--color-surface);
+  font-family: inherit;
+  color: var(--color-ink);
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.gs-field input:focus,
+.gs-field select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.gs-field-error {
+  color: var(--color-urgency-emergency);
+  font-size: 0.8rem;
+  margin: 6px 0 0;
+}
+
+.gs-error,
+.gs-success,
+.gs-warning {
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  margin: 0 0 16px;
+  border: 1px solid transparent;
+}
+
+.gs-error {
+  color: var(--color-urgency-emergency);
+  background: color-mix(in srgb, var(--color-urgency-emergency) 10%, white);
+  border-color: color-mix(in srgb, var(--color-urgency-emergency) 30%, white);
+}
+
+.gs-success {
+  color: var(--color-urgency-low);
+  background: color-mix(in srgb, var(--color-urgency-low) 10%, white);
+  border-color: color-mix(in srgb, var(--color-urgency-low) 30%, white);
+}
+
+.gs-warning {
+  color: var(--color-urgency-medium);
+  background: color-mix(in srgb, var(--color-urgency-medium) 12%, white);
+  border-color: color-mix(in srgb, var(--color-urgency-medium) 35%, white);
+}
+
+.gs-demo-box {
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  color: var(--color-ink);
+}
+
+.gs-demo-text {
+  margin: 0 0 6px;
+}
+
+.gs-demo-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.gs-demo-code {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--color-primary);
+}
+
+.gs-card .gs-button {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #ffffff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.gs-card .gs-button:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.gs-card .gs-button:disabled {
+  background: color-mix(in srgb, var(--color-primary) 45%, white);
+  cursor: not-allowed;
+}
+
+.gs-switch {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-ink-muted);
+  margin: 20px 0 0;
+}
+
+.gs-switch a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gs-switch a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}

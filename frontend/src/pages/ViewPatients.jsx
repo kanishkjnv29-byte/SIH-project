@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import UrgencyBadge from '../components/UrgencyBadge';
+import LanguageToggle from '../components/LanguageToggle';
 import './Dashboard.css';
 import './Patients.css';
 
@@ -12,6 +14,7 @@ function truncate(text, length) {
 }
 
 function ViewPatients() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [patients, setPatients] = useState(null);
   const [error, setError] = useState('');
@@ -50,17 +53,20 @@ function ViewPatients() {
   return (
     <div className="dashboard-page">
       <div className="patients-container">
+        <div className="view-patients-topbar">
+          <LanguageToggle />
+        </div>
         <Link to="/dashboard" className="back-link">
-          ← Back to Dashboard
+          ← {t('backToDashboard')}
         </Link>
-        <h1>Patients</h1>
+        <h1>{t('patients')}</h1>
 
         {error && <p className="form-error">{error}</p>}
 
         {!error && patients === null && <p className="dashboard-loading">Loading...</p>}
 
         {!error && patients !== null && patients.length === 0 && (
-          <p className="dashboard-loading">No patients added yet.</p>
+          <p className="dashboard-loading">{t('noPatientsYet')}</p>
         )}
 
         {!error && patients !== null && patients.length > 0 && (
@@ -69,11 +75,11 @@ function ViewPatients() {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Age</th>
-                  <th>Gender</th>
-                  <th>Village</th>
-                  <th>Symptoms</th>
-                  <th>Added By</th>
+                  <th>{t('age')}</th>
+                  <th>{t('gender')}</th>
+                  <th>{t('village')}</th>
+                  <th>{t('symptoms')}</th>
+                  <th>{t('addedBy')}</th>
                   <th>Urgency</th>
                 </tr>
               </thead>

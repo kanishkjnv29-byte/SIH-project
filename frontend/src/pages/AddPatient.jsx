@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageToggle from '../components/LanguageToggle';
 import './AuthForm.css';
 import './Dashboard.css';
 
@@ -24,6 +26,7 @@ const INITIAL_FORM = {
 };
 
 function AddPatient() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const recognitionRef = useRef(null);
   const [form, setForm] = useState(INITIAL_FORM);
@@ -135,7 +138,7 @@ function AddPatient() {
         return;
       }
 
-      setStatus({ type: 'success', message: 'Patient added successfully! Redirecting...' });
+      setStatus({ type: 'success', message: t('patientAdded') });
       setTimeout(() => navigate('/patients'), 1200);
     } catch {
       setStatus({ type: 'error', message: 'Could not reach the server. Please try again.' });
@@ -147,8 +150,11 @@ function AddPatient() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+        <div className="form-topbar">
+          <LanguageToggle />
+        </div>
         <Link to="/dashboard" className="back-link">
-          ← Back to Dashboard
+          ← {t('backToDashboard')}
         </Link>
         <h1>Add New Patient</h1>
 
@@ -160,23 +166,23 @@ function AddPatient() {
           </div>
 
           <div className="field">
-            <label htmlFor="age">Age</label>
+            <label htmlFor="age">{t('age')}</label>
             <input id="age" name="age" type="number" min="0" max="120" value={form.age} onChange={handleChange} />
             {errors.age && <p className="field-error">{errors.age}</p>}
           </div>
 
           <div className="field">
-            <label htmlFor="gender">Gender</label>
+            <label htmlFor="gender">{t('gender')}</label>
             <select id="gender" name="gender" value={form.gender} onChange={handleChange}>
               <option value="">Select gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
+              <option value="Male">{t('male')}</option>
+              <option value="Female">{t('female')}</option>
+              <option value="Other">{t('other')}</option>
             </select>
           </div>
 
           <div className="field">
-            <label htmlFor="phone">Phone</label>
+            <label htmlFor="phone">{t('phone')}</label>
             <input
               id="phone"
               name="phone"
@@ -190,12 +196,12 @@ function AddPatient() {
           </div>
 
           <div className="field">
-            <label htmlFor="village">Village</label>
+            <label htmlFor="village">{t('village')}</label>
             <input id="village" name="village" type="text" value={form.village} onChange={handleChange} />
           </div>
 
           <div className="field">
-            <label htmlFor="symptoms">Symptoms</label>
+            <label htmlFor="symptoms">{t('symptoms')}</label>
             <div className="symptoms-input-row">
               <textarea
                 id="symptoms"
@@ -211,7 +217,8 @@ function AddPatient() {
                     value={voiceLang}
                     onChange={(e) => setVoiceLang(e.target.value)}
                     disabled={isListening}
-                    title="Voice input language"
+                    title={t('voiceLanguage')}
+                    aria-label={t('voiceLanguage')}
                   >
                     {VOICE_LANGUAGES.map((lang) => (
                       <option key={lang.value} value={lang.value}>
@@ -240,7 +247,7 @@ function AddPatient() {
           )}
 
           <button type="submit" disabled={submitting}>
-            {submitting ? 'Saving...' : 'Add Patient'}
+            {submitting ? 'Saving...' : t('addPatientButton')}
           </button>
         </form>
       </div>

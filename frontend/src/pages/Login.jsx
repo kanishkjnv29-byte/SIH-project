@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './AuthForm.css';
+import { useTranslation } from 'react-i18next';
+import AuthBrandHeader from '../components/AuthBrandHeader';
+import LanguageToggle from '../components/LanguageToggle';
+import './Auth.css';
 
 const LOGIN_URL = 'http://localhost:5000/api/auth/login';
 const VERIFY_OTP_URL = 'http://localhost:5000/api/auth/verify-otp';
 
 function Login() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState('credentials'); // 'credentials' | 'otp'
   const [aadhaarNumber, setAadhaarNumber] = useState('');
@@ -69,82 +73,93 @@ function Login() {
 
   if (step === 'otp') {
     return (
-      <div className="auth-page">
-        <div className="auth-card">
-          <h1>Enter verification code</h1>
+      <div className="gs-page">
+        <div className="gs-container">
+          <AuthBrandHeader />
+          <div className="gs-card">
+            <div className="gs-card-topbar">
+              <LanguageToggle />
+            </div>
+            <h1>{t('enterVerificationCode')}</h1>
 
-          <div className="demo-otp-box">
-            <strong>DEMO MODE</strong>
-            In the real app this would be texted to you. For this demo:{' '}
-            <span className="demo-otp-code">{demoOtp}</span>
-          </div>
-
-          <form onSubmit={handleOtpSubmit} noValidate>
-            <div className="field">
-              <label htmlFor="otp">Verification Code</label>
-              <input
-                id="otp"
-                name="otp"
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-              />
+            <div className="gs-demo-box">
+              <p className="gs-demo-text">{t('demoModeNotice')}</p>
+              <span className="gs-demo-code">{demoOtp}</span>
             </div>
 
-            {error && <p className="form-error">{error}</p>}
+            <form onSubmit={handleOtpSubmit} noValidate>
+              <div className="gs-field">
+                <label htmlFor="otp">Verification Code</label>
+                <input
+                  id="otp"
+                  name="otp"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                />
+              </div>
 
-            <button type="submit" disabled={submitting}>
-              {submitting ? 'Verifying...' : 'Verify Code'}
-            </button>
-          </form>
+              {error && <p className="gs-error">{error}</p>}
+
+              <button type="submit" className="gs-button" disabled={submitting}>
+                {submitting ? 'Verifying...' : t('verify')}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <h1>Health Worker Log In</h1>
-
-        <form onSubmit={handleCredentialsSubmit} noValidate>
-          <div className="field">
-            <label htmlFor="aadhaar_number">Aadhaar Number</label>
-            <input
-              id="aadhaar_number"
-              name="aadhaar_number"
-              type="text"
-              inputMode="numeric"
-              maxLength={12}
-              placeholder="12-digit number"
-              value={aadhaarNumber}
-              onChange={(e) => setAadhaarNumber(e.target.value)}
-            />
+    <div className="gs-page">
+      <div className="gs-container">
+        <AuthBrandHeader />
+        <div className="gs-card">
+          <div className="gs-card-topbar">
+            <LanguageToggle />
           </div>
+          <h1>Health Worker Log In</h1>
 
-          <div className="field">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+          <form onSubmit={handleCredentialsSubmit} noValidate>
+            <div className="gs-field">
+              <label htmlFor="aadhaar_number">{t('aadhaarNumber')}</label>
+              <input
+                id="aadhaar_number"
+                name="aadhaar_number"
+                type="text"
+                inputMode="numeric"
+                maxLength={12}
+                placeholder="12-digit number"
+                value={aadhaarNumber}
+                onChange={(e) => setAadhaarNumber(e.target.value)}
+              />
+            </div>
 
-          {error && <p className="form-error">{error}</p>}
+            <div className="gs-field">
+              <label htmlFor="password">{t('password')}</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
 
-          <button type="submit" disabled={submitting}>
-            {submitting ? 'Logging in...' : 'Log In'}
-          </button>
-        </form>
+            {error && <p className="gs-error">{error}</p>}
 
-        <p className="auth-switch">
-          Don't have an account? <Link to="/signup">Sign Up</Link>
-        </p>
+            <button type="submit" className="gs-button" disabled={submitting}>
+              {submitting ? 'Logging in...' : t('login')}
+            </button>
+          </form>
+
+          <p className="gs-switch">
+            Don't have an account? <Link to="/signup">{t('signup')}</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

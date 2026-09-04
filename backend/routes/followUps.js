@@ -7,7 +7,7 @@ const router = Router();
 router.get('/', authenticate, async (req, res) => {
   const { data, error } = await supabase
     .from('follow_ups')
-    .select('*, referral:referrals(patient:patients(name), facility:facilities(name))')
+    .select('*, referral:referrals(patient:patients(name, urgency_level), facility:facilities(name))')
     .eq('assigned_to', req.worker.id);
 
   if (error) {
@@ -19,6 +19,7 @@ router.get('/', authenticate, async (req, res) => {
     .map(({ referral, ...rest }) => ({
       ...rest,
       patient_name: referral?.patient?.name || null,
+      patient_urgency_level: referral?.patient?.urgency_level || null,
       facility_name: referral?.facility?.name || null,
     }))
     .sort((a, b) => {

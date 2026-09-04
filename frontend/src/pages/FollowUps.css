@@ -1,29 +1,59 @@
+.gs-followups-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.followups-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.followups-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 4px 0 24px;
+}
+
+.followups-loading,
+.followups-empty {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  color: var(--color-ink-muted);
+  font-size: 0.95rem;
+}
+
 .followup-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .followup-card {
-  background: #fff;
-  border: 1px solid #e2e6ea;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 16px 20px;
 }
 
 .followup-card.followup-completed {
-  background: #f4f6f8;
-  color: #888;
+  background: var(--color-bg);
 }
 
 .followup-card.followup-completed .followup-patient,
 .followup-card.followup-completed .followup-facility,
 .followup-card.followup-completed .followup-due {
-  color: #999;
+  color: var(--color-ink-muted);
 }
 
 .followup-card.followup-cascade {
-  border-left: 3px solid #7c3aed;
+  border-left: 4px solid #7c3aed;
 }
 
 .followup-card-header {
@@ -55,51 +85,54 @@
 
 .followup-patient {
   font-weight: 600;
-  color: #1a2333;
+  color: var(--color-ink);
 }
 
 .followup-facility {
   margin: 0 0 4px;
-  color: #444;
+  color: var(--color-ink-muted);
+  font-size: 0.9rem;
 }
 
 .followup-due {
   margin: 0 0 12px;
-  color: #555;
-  font-size: 0.9rem;
+  color: var(--color-ink-muted);
+  font-size: 0.85rem;
 }
 
 .followup-due.followup-overdue {
-  color: #d33;
+  color: var(--color-danger);
   font-weight: 700;
 }
 
 .followup-notes {
   margin: 8px 0 0;
-  color: #666;
-  font-size: 0.9rem;
+  color: var(--color-ink-muted);
+  font-size: 0.85rem;
   font-style: italic;
 }
 
 .followup-complete-form {
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .followup-complete-form textarea {
   width: 100%;
   box-sizing: border-box;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-family: inherit;
   padding: 10px 12px;
-  border: 1px solid #cbd2d9;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   outline: none;
   resize: vertical;
   margin-bottom: 10px;
+  color: var(--color-ink);
+  background: var(--color-surface);
 }
 
 .followup-complete-form textarea:focus {
-  border-color: #3366ff;
+  border-color: var(--color-primary);
 }
 
 .followup-complete-actions {
@@ -107,17 +140,38 @@
   gap: 10px;
 }
 
-.secondary-button {
-  padding: 12px 20px;
-  font-size: 1rem;
+.followup-confirm-button {
+  padding: 10px 18px;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #333;
-  background: #fff;
-  border: 1px solid #cbd2d9;
+  color: #ffffff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.followup-confirm-button:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.followup-confirm-button:disabled {
+  background: var(--color-border);
+  cursor: not-allowed;
+}
+
+.secondary-button {
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   cursor: pointer;
 }
 
 .secondary-button:hover {
-  border-color: #999;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }

@@ -124,19 +124,19 @@ function FollowUps() {
   }
 
   return (
-    <div className="dashboard-page">
-      <div className="patients-container">
+    <div className="gs-followups-page">
+      <div className="followups-content">
         <Link to="/dashboard" className="back-link">
           ← Back to Dashboard
         </Link>
-        <h1>My Follow-ups</h1>
+        <h1 className="followups-title">My Follow-ups</h1>
 
         {error && <p className="form-error">{error}</p>}
 
-        {!error && followUps === null && <p className="dashboard-loading">Loading...</p>}
+        {!error && followUps === null && <p className="followups-loading">Loading...</p>}
 
         {!error && followUps !== null && followUps.length === 0 && (
-          <p className="dashboard-loading">No follow-ups assigned to you.</p>
+          <p className="followups-empty">No follow-ups assigned to you.</p>
         )}
 
         {!error && followUps !== null && followUps.length > 0 && (
@@ -184,7 +184,7 @@ function FollowUps() {
                         <div className="followup-complete-actions">
                           <button
                             type="button"
-                            className="primary-button"
+                            className="followup-confirm-button"
                             disabled={submittingId === followUp.id}
                             onClick={() => handleSubmitComplete(followUp.id)}
                           >
@@ -196,7 +196,11 @@ function FollowUps() {
                         </div>
                       </div>
                     ) : (
-                      <button type="button" className="primary-button" onClick={() => startComplete(followUp.id)}>
+                      <button
+                        type="button"
+                        className="followup-confirm-button"
+                        onClick={() => startComplete(followUp.id)}
+                      >
                         Mark Done
                       </button>
                     ))}

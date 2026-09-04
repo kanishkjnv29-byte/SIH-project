@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './AuthForm.css';
+import { useTranslation } from 'react-i18next';
+import AuthBrandHeader from '../components/AuthBrandHeader';
+import LanguageToggle from '../components/LanguageToggle';
+import { ROLE_VALUES, ROLE_LABEL_KEYS } from '../i18n/roleLabels';
+import './Auth.css';
 
 const API_URL = 'http://localhost:5000/api/auth/signup';
-
-const ROLES = [
-  { value: 'ASHA', label: 'ASHA' },
-  { value: 'ANM', label: 'ANM' },
-  { value: 'PHC_DOCTOR', label: 'PHC Doctor' },
-];
 
 const INITIAL_FORM = {
   name: '',
@@ -20,6 +18,7 @@ const INITIAL_FORM = {
 };
 
 function SignUp() {
+  const { t } = useTranslation();
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState({ type: null, message: '' });
@@ -85,100 +84,106 @@ function SignUp() {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <h1>Health Worker Sign Up</h1>
-
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="field">
-            <label htmlFor="name">Full Name</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value={form.name}
-              onChange={handleChange}
-            />
-            {errors.name && <p className="field-error">{errors.name}</p>}
+    <div className="gs-page">
+      <div className="gs-container">
+        <AuthBrandHeader />
+        <div className="gs-card">
+          <div className="gs-card-topbar">
+            <LanguageToggle />
           </div>
+          <h1>Health Worker Sign Up</h1>
 
-          <div className="field">
-            <label htmlFor="aadhaar_number">Aadhaar Number</label>
-            <input
-              id="aadhaar_number"
-              name="aadhaar_number"
-              type="text"
-              inputMode="numeric"
-              maxLength={12}
-              placeholder="12-digit number"
-              value={form.aadhaar_number}
-              onChange={handleChange}
-            />
-            {errors.aadhaar_number && <p className="field-error">{errors.aadhaar_number}</p>}
-          </div>
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="gs-field">
+              <label htmlFor="name">{t('fullName')}</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                value={form.name}
+                onChange={handleChange}
+              />
+              {errors.name && <p className="gs-field-error">{errors.name}</p>}
+            </div>
 
-          <div className="field">
-            <label htmlFor="role">Role</label>
-            <select id="role" name="role" value={form.role} onChange={handleChange}>
-              <option value="">Select a role</option>
-              {ROLES.map((r) => (
-                <option key={r.value} value={r.value}>
-                  {r.label}
-                </option>
-              ))}
-            </select>
-            {errors.role && <p className="field-error">{errors.role}</p>}
-          </div>
+            <div className="gs-field">
+              <label htmlFor="aadhaar_number">{t('aadhaarNumber')}</label>
+              <input
+                id="aadhaar_number"
+                name="aadhaar_number"
+                type="text"
+                inputMode="numeric"
+                maxLength={12}
+                placeholder="12-digit number"
+                value={form.aadhaar_number}
+                onChange={handleChange}
+              />
+              {errors.aadhaar_number && <p className="gs-field-error">{errors.aadhaar_number}</p>}
+            </div>
 
-          <div className="field">
-            <label htmlFor="facility_name">Facility Name</label>
-            <input
-              id="facility_name"
-              name="facility_name"
-              type="text"
-              value={form.facility_name}
-              onChange={handleChange}
-            />
-          </div>
+            <div className="gs-field">
+              <label htmlFor="role">{t('role')}</label>
+              <select id="role" name="role" value={form.role} onChange={handleChange}>
+                <option value="">Select a role</option>
+                {ROLE_VALUES.map((value) => (
+                  <option key={value} value={value}>
+                    {t(ROLE_LABEL_KEYS[value])}
+                  </option>
+                ))}
+              </select>
+              {errors.role && <p className="gs-field-error">{errors.role}</p>}
+            </div>
 
-          <div className="field">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-            />
-            {errors.password && <p className="field-error">{errors.password}</p>}
-          </div>
+            <div className="gs-field">
+              <label htmlFor="facility_name">{t('facilityName')}</label>
+              <input
+                id="facility_name"
+                name="facility_name"
+                type="text"
+                value={form.facility_name}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="field">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-            />
-            {errors.confirmPassword && <p className="field-error">{errors.confirmPassword}</p>}
-          </div>
+            <div className="gs-field">
+              <label htmlFor="password">{t('password')}</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+              />
+              {errors.password && <p className="gs-field-error">{errors.password}</p>}
+            </div>
 
-          {status.type && (
-            <p className={status.type === 'success' ? 'form-success' : 'form-error'}>
-              {status.message}
-            </p>
-          )}
+            <div className="gs-field">
+              <label htmlFor="confirmPassword">{t('confirmPassword')}</label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                value={form.confirmPassword}
+                onChange={handleChange}
+              />
+              {errors.confirmPassword && <p className="gs-field-error">{errors.confirmPassword}</p>}
+            </div>
 
-          <button type="submit" disabled={submitting}>
-            {submitting ? 'Creating account...' : 'Sign Up'}
-          </button>
-        </form>
+            {status.type && (
+              <p className={status.type === 'success' ? 'gs-success' : 'gs-error'}>
+                {status.message}
+              </p>
+            )}
 
-        <p className="auth-switch">
-          Already have an account? <Link to="/login">Log In</Link>
-        </p>
+            <button type="submit" className="gs-button" disabled={submitting}>
+              {submitting ? 'Creating account...' : t('signup')}
+            </button>
+          </form>
+
+          <p className="gs-switch">
+            Already have an account? <Link to="/login">{t('login')}</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

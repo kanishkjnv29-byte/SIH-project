@@ -1,13 +1,21 @@
 .patients-container {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 32px;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .patients-container h1 {
   font-size: 1.3rem;
   color: #1a2333;
   margin: 0 0 20px;
+}
+
+.view-patients-topbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 12px;
 }
 
 .patients-table-wrapper {
@@ -115,23 +123,23 @@
 }
 
 .urgency-low {
-  background: #e6f4ea;
-  color: #1a7f37;
+  background: color-mix(in srgb, var(--color-urgency-low) 15%, white);
+  color: var(--color-urgency-low);
 }
 
 .urgency-medium {
-  background: #fff8e6;
-  color: #8a6d00;
+  background: color-mix(in srgb, var(--color-urgency-medium) 20%, white);
+  color: color-mix(in srgb, var(--color-urgency-medium) 70%, black);
 }
 
 .urgency-high {
-  background: #ffe8d1;
-  color: #b35900;
+  background: color-mix(in srgb, var(--color-urgency-high) 15%, white);
+  color: var(--color-urgency-high);
 }
 
 .urgency-emergency {
-  background: #fdecea;
-  color: #d33;
+  background: color-mix(in srgb, var(--color-urgency-emergency) 12%, white);
+  color: var(--color-urgency-emergency);
 }
 
 .patient-info-grid {

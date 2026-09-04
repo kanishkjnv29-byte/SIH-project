@@ -1,0 +1,45 @@
+.language-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.language-toggle-option {
+  background: none;
+  border: none;
+  padding: 2px 2px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+}
+
+.language-toggle-option.active {
+  color: var(--color-primary);
+}
+
+.language-toggle-option:hover:not(.active) {
+  color: var(--color-ink);
+}
+
+.language-toggle-divider {
+  color: var(--color-border);
+  font-size: 0.85rem;
+}
+
+.language-toggle--on-dark .language-toggle-option {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.language-toggle--on-dark .language-toggle-option.active {
+  color: #ffffff;
+}
+
+.language-toggle--on-dark .language-toggle-option:hover:not(.active) {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.language-toggle--on-dark .language-toggle-divider {
+  color: rgba(255, 255, 255, 0.4);
+}
