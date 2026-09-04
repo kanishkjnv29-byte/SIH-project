@@ -7,6 +7,8 @@ import ViewPatients from './pages/ViewPatients';
 import PatientDetail from './pages/PatientDetail';
 import Facilities from './pages/Facilities';
 import FollowUps from './pages/FollowUps';
+import PatientPortal from './pages/PatientPortal';
+import PatientRecord from './pages/PatientRecord';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/patients" element={<ViewPatients />} />
         <Route path="/facilities" element={<Facilities />} />
         <Route path="/follow-ups" element={<FollowUps />} />
+        <Route path="/patient" element={<PatientPortal />} />
+        <Route path="/patient/:patientId" element={<PatientRecord />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

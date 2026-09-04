@@ -8,6 +8,8 @@ import facilitiesRouter from './routes/facilities.js';
 import referralsRouter from './routes/referrals.js';
 import followUpsRouter from './routes/followUps.js';
 import statsRouter from './routes/stats.js';
+import patientAuthRouter from './routes/patientAuth.js';
+import patientPortalRouter from './routes/patientPortal.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,6 +27,8 @@ app.use('/api/facilities', facilitiesRouter);
 app.use('/api/referrals', referralsRouter);
 app.use('/api/follow-ups', followUpsRouter);
 app.use('/api/stats', statsRouter);
+app.use('/api/patient-auth', patientAuthRouter);
+app.use('/api/patient-portal', patientPortalRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

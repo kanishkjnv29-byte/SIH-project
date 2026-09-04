@@ -358,3 +358,46 @@
   background: #a3b3e0;
   cursor: not-allowed;
 }
+
+.abha-id-value {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.4px;
+  cursor: help;
+}
+
+.patient-info-note {
+  margin: -12px 0 24px;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.scheme-check-section {
+  background: #fff;
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.scheme-check-section h2 {
+  font-size: 1rem;
+  margin: 0 0 16px;
+  color: #1a2333;
+}
+
+.scheme-suggestion-card {
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface, #fff));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.scheme-suggestion-text {
+  margin: 0 0 8px;
+  color: var(--color-ink, #333);
+  line-height: 1.5;
+}
+
+.scheme-suggestion-card .triage-note {
+  margin: 0;
+}

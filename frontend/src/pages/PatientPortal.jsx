@@ -1,33 +1,33 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AuthBrandHeader from '../components/AuthBrandHeader';
 import LanguageToggle from '../components/LanguageToggle';
 import './Auth.css';
 
-const LOGIN_URL = 'http://localhost:5000/api/auth/login';
-const VERIFY_OTP_URL = 'http://localhost:5000/api/auth/verify-otp';
+const REQUEST_OTP_URL = 'http://localhost:5000/api/patient-auth/request-otp';
+const VERIFY_OTP_URL = 'http://localhost:5000/api/patient-auth/verify-otp';
 
-function Login() {
+function PatientPortal() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [step, setStep] = useState('credentials'); // 'credentials' | 'otp'
-  const [aadhaarNumber, setAadhaarNumber] = useState('');
-  const [password, setPassword] = useState('');
+  const [step, setStep] = useState('phone'); // 'phone' | 'otp' | 'picker'
+  const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [demoOtp, setDemoOtp] = useState('');
+  const [patients, setPatients] = useState([]);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  async function handleCredentialsSubmit(e) {
+  async function handlePhoneSubmit(e) {
     e.preventDefault();
     setError('');
     setSubmitting(true);
     try {
-      const res = await fetch(LOGIN_URL, {
+      const res = await fetch(REQUEST_OTP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aadhaar_number: aadhaarNumber, password }),
+        body: JSON.stringify({ phone }),
       });
       const data = await res.json();
 
@@ -53,7 +53,7 @@ function Login() {
       const res = await fetch(VERIFY_OTP_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aadhaar_number: aadhaarNumber, otp }),
+        body: JSON.stringify({ phone, otp }),
       });
       const data = await res.json();
 
@@ -62,8 +62,15 @@ function Login() {
         return;
       }
 
-      localStorage.setItem('token', data.token);
-      navigate('/dashboard', { replace: true });
+      localStorage.setItem('patient_token', data.token);
+
+      if (data.patients.length === 1) {
+        navigate(`/patient/${data.patients[0].id}`, { replace: true });
+        return;
+      }
+
+      setPatients(data.patients);
+      setStep('picker');
     } catch {
       setError('Could not reach the server. Please try again.');
     } finally {
@@ -71,11 +78,45 @@ function Login() {
     }
   }
 
+  if (step === 'picker') {
+    return (
+      <div className="gs-page">
+        <div className="gs-container">
+          <AuthBrandHeader subtitle={t('checkYourHealthRecord')} />
+          <div className="gs-card">
+            <div className="gs-card-topbar">
+              <LanguageToggle />
+            </div>
+            <h1>{t('whoseRecord')}</h1>
+
+            <div className="gs-picker-list">
+              {patients.map((patient) => (
+                <button
+                  key={patient.id}
+                  type="button"
+                  className="gs-picker-item"
+                  onClick={() => navigate(`/patient/${patient.id}`)}
+                >
+                  <span className="gs-picker-name">{patient.name}</span>
+                  <span className="gs-picker-meta">
+                    {patient.age != null ? `${t('age')}: ${patient.age}` : null}
+                    {patient.age != null && patient.village ? ' · ' : null}
+                    {patient.village || null}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (step === 'otp') {
     return (
       <div className="gs-page">
         <div className="gs-container">
-          <AuthBrandHeader />
+          <AuthBrandHeader subtitle={t('checkYourHealthRecord')} />
           <div className="gs-card">
             <div className="gs-card-topbar">
               <LanguageToggle />
@@ -116,56 +157,38 @@ function Login() {
   return (
     <div className="gs-page">
       <div className="gs-container">
-        <AuthBrandHeader />
+        <AuthBrandHeader subtitle={t('checkYourHealthRecord')} />
         <div className="gs-card">
           <div className="gs-card-topbar">
             <LanguageToggle />
           </div>
-          <h1>Health Worker Log In</h1>
+          <h1>{t('checkYourHealthRecord')}</h1>
 
-          <form onSubmit={handleCredentialsSubmit} noValidate>
+          <form onSubmit={handlePhoneSubmit} noValidate>
             <div className="gs-field">
-              <label htmlFor="aadhaar_number">{t('aadhaarNumber')}</label>
+              <label htmlFor="phone">{t('phone')}</label>
               <input
-                id="aadhaar_number"
-                name="aadhaar_number"
+                id="phone"
+                name="phone"
                 type="text"
                 inputMode="numeric"
-                maxLength={12}
-                placeholder="12-digit number"
-                value={aadhaarNumber}
-                onChange={(e) => setAadhaarNumber(e.target.value)}
-              />
-            </div>
-
-            <div className="gs-field">
-              <label htmlFor="password">{t('password')}</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                maxLength={10}
+                placeholder="10-digit number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
 
             {error && <p className="gs-error">{error}</p>}
 
             <button type="submit" className="gs-button" disabled={submitting}>
-              {submitting ? 'Logging in...' : t('login')}
+              {submitting ? 'Sending...' : t('sendCode')}
             </button>
           </form>
-
-          <p className="gs-switch">
-            Don't have an account? <Link to="/signup">{t('signup')}</Link>
-          </p>
-          <p className="gs-switch">
-            <Link to="/patient">{t('patientPortalLink')}</Link>
-          </p>
         </div>
       </div>
     </div>
   );
 }
 
-export default Login;
+export default PatientPortal;

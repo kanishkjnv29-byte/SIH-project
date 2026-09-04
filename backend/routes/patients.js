@@ -8,12 +8,20 @@ import {
   parseTriageResponse,
   reportSummaryModel,
   buildReportSummaryPrompt,
+  schemeCheckModel,
+  buildSchemeCheckPrompt,
+  PMJAY_VERIFICATION_NOTE,
 } from '../lib/geminiClient.js';
 
 const router = Router();
 
 const REPORT_BUCKET = 'patient-reports';
 const SIGNED_URL_TTL_SECONDS = 60 * 60;
+
+function generateMockAbhaId() {
+  const digits = Array.from({ length: 14 }, () => Math.floor(Math.random() * 10)).join('');
+  return `${digits.slice(0, 2)}-${digits.slice(2, 6)}-${digits.slice(6, 10)}-${digits.slice(10, 14)}`;
+}
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -64,6 +72,7 @@ router.post('/', authenticate, async (req, res) => {
       village: village || null,
       symptoms: symptoms.trim(),
       created_by: req.worker.id,
+      abha_id: generateMockAbhaId(),
     })
     .select('*')
     .single();
@@ -160,6 +169,59 @@ router.post('/:id/triage', authenticate, async (req, res) => {
 
   if (updateError) {
     console.error('Triage update error:', updateError.message);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+  const { created_by_worker, ...patientData } = updated;
+  return res.json({ ...patientData, created_by_name: created_by_worker?.name || null });
+});
+
+router.post('/:id/scheme-check', authenticate, async (req, res) => {
+  const { id } = req.params;
+
+  const { data: patient, error: fetchError } = await supabase
+    .from('patients')
+    .select('id, age, symptoms, urgency_level, triage_reason')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error('Scheme check fetch error:', fetchError.message);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+  if (!patient) {
+    return res.status(404).json({ error: 'Patient not found.' });
+  }
+
+  const prompt = buildSchemeCheckPrompt(patient);
+
+  let note;
+  try {
+    const result = await schemeCheckModel.generateContent(prompt);
+    note = result.response.text().trim();
+  } catch (err) {
+    console.error('Gemini scheme check error:', err.message);
+    return res.status(502).json({ error: 'Could not check scheme benefits right now. Please try again.' });
+  }
+
+  if (!note) {
+    return res.status(502).json({ error: 'Could not check scheme benefits right now. Please try again.' });
+  }
+
+  const schemeSuggestion = `${note} ${PMJAY_VERIFICATION_NOTE}`;
+
+  const { data: updated, error: updateError } = await supabase
+    .from('patients')
+    .update({
+      scheme_suggestion: schemeSuggestion,
+      scheme_checked_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select('*, created_by_worker:health_workers(name)')
+    .single();
+
+  if (updateError) {
+    console.error('Scheme check update error:', updateError.message);
     return res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 

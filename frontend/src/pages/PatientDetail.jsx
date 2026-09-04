@@ -28,6 +28,8 @@ function PatientDetail() {
   const [error, setError] = useState('');
   const [triaging, setTriaging] = useState(false);
   const [triageError, setTriageError] = useState('');
+  const [schemeChecking, setSchemeChecking] = useState(false);
+  const [schemeError, setSchemeError] = useState('');
 
   const [facilities, setFacilities] = useState([]);
   const [referrals, setReferrals] = useState(null);
@@ -165,6 +167,39 @@ function PatientDetail() {
       setTriageError('Could not reach the server. Please try again.');
     } finally {
       setTriaging(false);
+    }
+  }
+
+  async function handleSchemeCheck() {
+    const token = getToken();
+    if (!token) return;
+
+    setSchemeChecking(true);
+    setSchemeError('');
+    try {
+      const res = await fetch(`${PATIENTS_URL}/${id}/scheme-check`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/login', { replace: true });
+        return;
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSchemeError(data.error || 'Something went wrong. Please try again.');
+        return;
+      }
+
+      setPatient(data);
+    } catch {
+      setSchemeError('Could not reach the server. Please try again.');
+    } finally {
+      setSchemeChecking(false);
     }
   }
 
@@ -364,7 +399,14 @@ function PatientDetail() {
           <div>
             <strong>Added by:</strong> {patient.created_by_name || '-'}
           </div>
+          <div title="Simulated for this demo — real ABHA integration requires government certification.">
+            <strong>ABHA ID (Demo):</strong>{' '}
+            <span className="abha-id-value">{patient.abha_id || '-'}</span>
+          </div>
         </div>
+        <p className="patient-info-note">
+          Simulated for this demo — real ABHA integration requires government certification.
+        </p>
 
         <div className="patient-symptoms">
           <strong>Symptoms</strong>
@@ -387,6 +429,31 @@ function PatientDetail() {
             </>
           )}
         </div>
+
+        {patient.urgency_level && (
+          <div className="scheme-check-section">
+            <h2>Government Scheme Benefits</h2>
+
+            {patient.scheme_suggestion ? (
+              <div className="scheme-suggestion-card">
+                <p className="scheme-suggestion-text">{patient.scheme_suggestion}</p>
+                <p className="triage-note">AI-suggested — please confirm with the patient and official channels.</p>
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="primary-button"
+                  onClick={handleSchemeCheck}
+                  disabled={schemeChecking}
+                >
+                  {schemeChecking ? 'Checking...' : 'Check Government Scheme Benefits'}
+                </button>
+                {schemeError && <p className="form-error">{schemeError}</p>}
+              </>
+            )}
+          </div>
+        )}
 
         <div className="referral-section">
           <h2>Refer to Facility</h2>
