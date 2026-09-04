@@ -3,11 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ReferralStatusBadge from '../components/ReferralStatusBadge';
 import LanguageToggle from '../components/LanguageToggle';
+import { API_BASE_URL } from '../config';
 import './Dashboard.css';
 import './Patients.css';
 import './FollowUps.css';
 
-const FOLLOW_UPS_URL = 'http://localhost:5000/api/follow-ups';
+const FOLLOW_UPS_URL = `${API_BASE_URL}/api/follow-ups`;
 
 function isPastDue(dueDateStr) {
   const due = new Date(`${dueDateStr}T00:00:00`);

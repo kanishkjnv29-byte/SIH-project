@@ -3,10 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import UrgencyBadge from '../components/UrgencyBadge';
 import LanguageToggle from '../components/LanguageToggle';
+import { API_BASE_URL } from '../config';
 import './Dashboard.css';
 import './Patients.css';
 
-const PATIENTS_URL = 'http://localhost:5000/api/patients';
+const PATIENTS_URL = `${API_BASE_URL}/api/patients`;
 
 const GENDER_LABEL_KEYS = {
   Male: 'male',

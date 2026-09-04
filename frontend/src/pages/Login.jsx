@@ -3,10 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AuthBrandHeader from '../components/AuthBrandHeader';
 import LanguageToggle from '../components/LanguageToggle';
+import { API_BASE_URL } from '../config';
 import './Auth.css';
 
-const LOGIN_URL = 'http://localhost:5000/api/auth/login';
-const VERIFY_OTP_URL = 'http://localhost:5000/api/auth/verify-otp';
+const LOGIN_URL = `${API_BASE_URL}/api/auth/login`;
+const VERIFY_OTP_URL = `${API_BASE_URL}/api/auth/verify-otp`;
 
 function Login() {
   const { t } = useTranslation();

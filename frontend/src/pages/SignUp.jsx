@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next';
 import AuthBrandHeader from '../components/AuthBrandHeader';
 import LanguageToggle from '../components/LanguageToggle';
 import { ROLE_VALUES, ROLE_LABEL_KEYS } from '../i18n/roleLabels';
+import { API_BASE_URL } from '../config';
 import './Auth.css';
 
-const API_URL = 'http://localhost:5000/api/auth/signup';
+const API_URL = `${API_BASE_URL}/api/auth/signup`;
 
 const INITIAL_FORM = {
   name: '',

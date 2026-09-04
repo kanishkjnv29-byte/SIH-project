@@ -5,13 +5,14 @@ import UrgencyBadge from '../components/UrgencyBadge';
 import ReferralStatusBadge from '../components/ReferralStatusBadge';
 import LanguageToggle from '../components/LanguageToggle';
 import { FACILITY_TYPE_LABELS } from '../constants/facilityTypes';
+import { API_BASE_URL } from '../config';
 import './AuthForm.css';
 import './Dashboard.css';
 import './Patients.css';
 
-const PATIENTS_URL = 'http://localhost:5000/api/patients';
-const FACILITIES_URL = 'http://localhost:5000/api/facilities';
-const REFERRALS_URL = 'http://localhost:5000/api/referrals';
+const PATIENTS_URL = `${API_BASE_URL}/api/patients`;
+const FACILITIES_URL = `${API_BASE_URL}/api/facilities`;
+const REFERRALS_URL = `${API_BASE_URL}/api/referrals`;
 
 function formatDate(isoString) {
   if (!isoString) return '';

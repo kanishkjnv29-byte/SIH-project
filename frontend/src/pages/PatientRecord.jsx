@@ -5,11 +5,12 @@ import LanguageToggle from '../components/LanguageToggle';
 import UrgencyBadge from '../components/UrgencyBadge';
 import ReferralStatusBadge from '../components/ReferralStatusBadge';
 import { FACILITY_TYPE_LABELS } from '../constants/facilityTypes';
+import { API_BASE_URL } from '../config';
 import './Dashboard.css';
 import './Patients.css';
 import './PatientRecord.css';
 
-const PATIENT_PORTAL_URL = 'http://localhost:5000/api/patient-portal';
+const PATIENT_PORTAL_URL = `${API_BASE_URL}/api/patient-portal`;
 
 const REFERRAL_STATUS_COLOR_VARS = {
   PENDING: 'var(--color-ink-muted)',

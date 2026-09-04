@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AuthBrandHeader from '../components/AuthBrandHeader';
 import LanguageToggle from '../components/LanguageToggle';
+import { API_BASE_URL } from '../config';
 import './Auth.css';
 
-const REQUEST_OTP_URL = 'http://localhost:5000/api/patient-auth/request-otp';
-const VERIFY_OTP_URL = 'http://localhost:5000/api/patient-auth/verify-otp';
+const REQUEST_OTP_URL = `${API_BASE_URL}/api/patient-auth/request-otp`;
+const VERIFY_OTP_URL = `${API_BASE_URL}/api/patient-auth/verify-otp`;
 
 function PatientPortal() {
   const { t } = useTranslation();

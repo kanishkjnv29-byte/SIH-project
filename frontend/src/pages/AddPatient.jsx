@@ -2,10 +2,11 @@ import { useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../components/LanguageToggle';
+import { API_BASE_URL } from '../config';
 import './AuthForm.css';
 import './Dashboard.css';
 
-const PATIENTS_URL = 'http://localhost:5000/api/patients';
+const PATIENTS_URL = `${API_BASE_URL}/api/patients`;
 
 const SpeechRecognitionImpl =
   typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);

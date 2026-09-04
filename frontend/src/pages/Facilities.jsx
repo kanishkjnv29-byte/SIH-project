@@ -9,6 +9,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import LanguageToggle from '../components/LanguageToggle';
 import { FACILITY_TYPE_COLORS, FACILITY_TYPE_LABEL_KEYS } from '../constants/facilityTypes';
+import { API_BASE_URL } from '../config';
 import './Dashboard.css';
 import './Patients.css';
 import './Facilities.css';
@@ -21,7 +22,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-const FACILITIES_URL = 'http://localhost:5000/api/facilities';
+const FACILITIES_URL = `${API_BASE_URL}/api/facilities`;
 const GORAKHPUR_CENTER = [26.76, 83.37];
 
 const iconCache = {};

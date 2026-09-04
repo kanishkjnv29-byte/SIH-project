@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { LogOut, UserPlus, Users, MapPin, ClipboardList } from 'lucide-react';
 import LanguageToggle from '../components/LanguageToggle';
 import { ROLE_LABEL_KEYS } from '../i18n/roleLabels';
+import { API_BASE_URL } from '../config';
 import './Dashboard.css';
 
-const ME_URL = 'http://localhost:5000/api/auth/me';
-const STATS_URL = 'http://localhost:5000/api/stats';
-const FOLLOW_UPS_URL = 'http://localhost:5000/api/follow-ups';
+const ME_URL = `${API_BASE_URL}/api/auth/me`;
+const STATS_URL = `${API_BASE_URL}/api/stats`;
+const FOLLOW_UPS_URL = `${API_BASE_URL}/api/follow-ups`;
 
 const URGENCY_ORDER = ['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY'];
 const URGENCY_COLOR_VARS = {
