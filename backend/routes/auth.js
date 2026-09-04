@@ -9,6 +9,7 @@ const router = Router();
 const VALID_ROLES = ['ASHA', 'ANM', 'PHC_DOCTOR'];
 
 const OTP_TTL_MS = 5 * 60 * 1000;
+const MAX_OTP_ATTEMPTS = 5;
 const otpStore = new Map();
 
 function generateOtp() {
@@ -98,6 +99,7 @@ router.post('/login', async (req, res) => {
   otpStore.set(aadhaar_number, {
     otp,
     expiresAt: Date.now() + OTP_TTL_MS,
+    attempts: 0,
     worker: { id: worker.id, name: worker.name, role: worker.role, facility_name: worker.facility_name },
   });
 
@@ -116,7 +118,18 @@ router.post('/verify-otp', async (req, res) => {
   }
 
   const entry = otpStore.get(aadhaar_number);
-  if (!entry || entry.otp !== otp || Date.now() > entry.expiresAt) {
+  if (!entry || Date.now() > entry.expiresAt) {
+    otpStore.delete(aadhaar_number);
+    return res.status(401).json({ error: 'That code is invalid or has expired. Please try logging in again.' });
+  }
+
+  if (entry.attempts >= MAX_OTP_ATTEMPTS) {
+    otpStore.delete(aadhaar_number);
+    return res.status(401).json({ error: 'Too many incorrect attempts. Please log in again.' });
+  }
+
+  if (entry.otp !== otp) {
+    entry.attempts += 1;
     return res.status(401).json({ error: 'That code is invalid or has expired. Please try logging in again.' });
   }
 

@@ -122,7 +122,7 @@ router.patch('/:id/status', authenticate, async (req, res) => {
     .from('referrals')
     .update({ status })
     .eq('id', id)
-    .select('*, facility:facilities(name, type), patient:patients(name)')
+    .select('*, facility:facilities(name, type)')
     .maybeSingle();
 
   if (error) {
@@ -134,9 +134,7 @@ router.patch('/:id/status', authenticate, async (req, res) => {
   }
 
   if (status === 'COMPLETED') {
-    const patientName = updated.patient?.name || 'The patient';
-    const facilityName = updated.facility?.name || 'the facility';
-    const cascadeNote = `Update: ${patientName} was marked Completed at ${facilityName}`;
+    const facilityName = updated.facility?.name || null;
     const today = addDaysAsDateString(0);
 
     let previousId = updated.previous_referral_id;
@@ -158,7 +156,7 @@ router.patch('/:id/status', authenticate, async (req, res) => {
         due_date: today,
         status: 'PENDING',
         source: 'CASCADE_UPDATE',
-        notes: cascadeNote,
+        cascade_facility_name: facilityName,
       });
 
       if (cascadeError) {
@@ -169,7 +167,7 @@ router.patch('/:id/status', authenticate, async (req, res) => {
     }
   }
 
-  const { facility: facilityData, patient: patientData, ...referral } = updated;
+  const { facility: facilityData, ...referral } = updated;
   return res.json({
     ...referral,
     facility_name: facilityData?.name || null,

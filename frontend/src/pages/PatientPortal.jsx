@@ -82,7 +82,7 @@ function PatientPortal() {
     return (
       <div className="gs-page">
         <div className="gs-container">
-          <AuthBrandHeader subtitle={t('checkYourHealthRecord')} />
+          <AuthBrandHeader subtitle={t('checkHealthRecord')} />
           <div className="gs-card">
             <div className="gs-card-topbar">
               <LanguageToggle />
@@ -116,7 +116,7 @@ function PatientPortal() {
     return (
       <div className="gs-page">
         <div className="gs-container">
-          <AuthBrandHeader subtitle={t('checkYourHealthRecord')} />
+          <AuthBrandHeader subtitle={t('checkHealthRecord')} />
           <div className="gs-card">
             <div className="gs-card-topbar">
               <LanguageToggle />
@@ -157,12 +157,12 @@ function PatientPortal() {
   return (
     <div className="gs-page">
       <div className="gs-container">
-        <AuthBrandHeader subtitle={t('checkYourHealthRecord')} />
+        <AuthBrandHeader subtitle={t('checkHealthRecord')} />
         <div className="gs-card">
           <div className="gs-card-topbar">
             <LanguageToggle />
           </div>
-          <h1>{t('checkYourHealthRecord')}</h1>
+          <h1>{t('checkHealthRecord')}</h1>
 
           <form onSubmit={handlePhoneSubmit} noValidate>
             <div className="gs-field">
@@ -173,7 +173,7 @@ function PatientPortal() {
                 type="text"
                 inputMode="numeric"
                 maxLength={10}
-                placeholder="10-digit number"
+                placeholder={t('phonePlaceholder')}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />

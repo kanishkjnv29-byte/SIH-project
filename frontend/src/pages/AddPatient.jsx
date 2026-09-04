@@ -11,8 +11,8 @@ const SpeechRecognitionImpl =
   typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
 
 const VOICE_LANGUAGES = [
-  { value: 'hi-IN', label: 'Hindi' },
-  { value: 'mr-IN', label: 'Marathi' },
+  { value: 'hi-IN', label: 'हिन्दी' },
+  { value: 'mr-IN', label: 'मराठी' },
   { value: 'en-IN', label: 'English' },
 ];
 
@@ -156,11 +156,11 @@ function AddPatient() {
         <Link to="/dashboard" className="back-link">
           ← {t('backToDashboard')}
         </Link>
-        <h1>Add New Patient</h1>
+        <h1>{t('addNewPatient')}</h1>
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="field">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">{t('name')}</label>
             <input id="name" name="name" type="text" value={form.name} onChange={handleChange} />
             {errors.name && <p className="field-error">{errors.name}</p>}
           </div>
@@ -174,7 +174,7 @@ function AddPatient() {
           <div className="field">
             <label htmlFor="gender">{t('gender')}</label>
             <select id="gender" name="gender" value={form.gender} onChange={handleChange}>
-              <option value="">Select gender</option>
+              <option value="">{t('selectGender')}</option>
               <option value="Male">{t('male')}</option>
               <option value="Female">{t('female')}</option>
               <option value="Other">{t('other')}</option>

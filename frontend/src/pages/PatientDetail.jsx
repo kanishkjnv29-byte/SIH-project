@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import UrgencyBadge from '../components/UrgencyBadge';
 import ReferralStatusBadge from '../components/ReferralStatusBadge';
+import LanguageToggle from '../components/LanguageToggle';
 import { FACILITY_TYPE_LABELS } from '../constants/facilityTypes';
 import './AuthForm.css';
 import './Dashboard.css';
@@ -22,6 +24,7 @@ function formatDateOnly(dateStr) {
 }
 
 function PatientDetail() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [patient, setPatient] = useState(null);
@@ -356,8 +359,11 @@ function PatientDetail() {
     return (
       <div className="dashboard-page">
         <div className="patients-container">
+          <div className="view-patients-topbar">
+            <LanguageToggle />
+          </div>
           <Link to="/patients" className="back-link">
-            ← Back to Patients
+            ← {t('backToPatients')}
           </Link>
           <p className="form-error">{error}</p>
         </div>
@@ -378,38 +384,42 @@ function PatientDetail() {
   return (
     <div className="dashboard-page">
       <div className="patients-container">
+        <div className="view-patients-topbar">
+          <LanguageToggle />
+        </div>
         <Link to="/patients" className="back-link">
-          ← Back to Patients
+          ← {t('backToPatients')}
         </Link>
         <h1>{patient.name}</h1>
 
         <div className="patient-info-grid">
           <div>
-            <strong>Age:</strong> {patient.age ?? '-'}
+            <strong>{t('name')}:</strong> {patient.name}
           </div>
           <div>
-            <strong>Gender:</strong> {patient.gender || '-'}
+            <strong>{t('age')}:</strong> {patient.age ?? '-'}
           </div>
           <div>
-            <strong>Phone:</strong> {patient.phone || '-'}
+            <strong>{t('gender')}:</strong> {patient.gender || '-'}
           </div>
           <div>
-            <strong>Village:</strong> {patient.village || '-'}
+            <strong>{t('phone')}:</strong> {patient.phone || '-'}
           </div>
           <div>
-            <strong>Added by:</strong> {patient.created_by_name || '-'}
+            <strong>{t('village')}:</strong> {patient.village || '-'}
           </div>
-          <div title="Simulated for this demo — real ABHA integration requires government certification.">
-            <strong>ABHA ID (Demo):</strong>{' '}
+          <div>
+            <strong>{t('addedBy')}:</strong> {patient.created_by_name || '-'}
+          </div>
+          <div title={t('abhaIdNote')}>
+            <strong>{t('abhaIdDemo')}:</strong>{' '}
             <span className="abha-id-value">{patient.abha_id || '-'}</span>
           </div>
         </div>
-        <p className="patient-info-note">
-          Simulated for this demo — real ABHA integration requires government certification.
-        </p>
+        <p className="patient-info-note">{t('abhaIdNote')}</p>
 
         <div className="patient-symptoms">
-          <strong>Symptoms</strong>
+          <strong>{t('symptoms')}</strong>
           <p>{patient.symptoms}</p>
         </div>
 
@@ -418,12 +428,12 @@ function PatientDetail() {
             <>
               <UrgencyBadge level={patient.urgency_level} />
               <p className="triage-reason">{patient.triage_reason}</p>
-              <p className="triage-note">AI-suggested — please use your clinical judgment.</p>
+              <p className="triage-note">{t('aiSuggestedDisclaimer')}</p>
             </>
           ) : (
             <>
               <button type="button" className="primary-button" onClick={handleTriage} disabled={triaging}>
-                {triaging ? 'Running AI Triage...' : 'Run AI Triage'}
+                {triaging ? 'Running AI Triage...' : t('runAiTriage')}
               </button>
               {triageError && <p className="form-error">{triageError}</p>}
             </>
@@ -432,12 +442,12 @@ function PatientDetail() {
 
         {patient.urgency_level && (
           <div className="scheme-check-section">
-            <h2>Government Scheme Benefits</h2>
+            <h2>{t('govSupportTitle')}</h2>
 
             {patient.scheme_suggestion ? (
               <div className="scheme-suggestion-card">
                 <p className="scheme-suggestion-text">{patient.scheme_suggestion}</p>
-                <p className="triage-note">AI-suggested — please confirm with the patient and official channels.</p>
+                <p className="triage-note">{t('aiSuggestedDisclaimer')}</p>
               </div>
             ) : (
               <>
@@ -447,7 +457,7 @@ function PatientDetail() {
                   onClick={handleSchemeCheck}
                   disabled={schemeChecking}
                 >
-                  {schemeChecking ? 'Checking...' : 'Check Government Scheme Benefits'}
+                  {schemeChecking ? 'Checking...' : t('checkSchemeBenefits')}
                 </button>
                 {schemeError && <p className="form-error">{schemeError}</p>}
               </>
@@ -456,11 +466,11 @@ function PatientDetail() {
         )}
 
         <div className="referral-section">
-          <h2>Refer to Facility</h2>
+          <h2>{t('referToFacility')}</h2>
 
           <form onSubmit={handleReferralSubmit} noValidate>
             <div className="field">
-              <label htmlFor="facility">Facility</label>
+              <label htmlFor="facility">{t('facility')}</label>
               <select
                 id="facility"
                 value={selectedFacilityId}
@@ -476,7 +486,7 @@ function PatientDetail() {
             </div>
 
             <div className="field">
-              <label htmlFor="reason">Reason for referral</label>
+              <label htmlFor="reason">{t('reasonForReferral')}</label>
               <textarea
                 id="reason"
                 rows={3}
@@ -490,13 +500,13 @@ function PatientDetail() {
             {referralWarning && <p className="form-warning">{referralWarning}</p>}
 
             <button type="submit" className="primary-button" disabled={referring}>
-              {referring ? 'Sending...' : 'Send Referral'}
+              {referring ? 'Sending...' : t('sendReferral')}
             </button>
           </form>
         </div>
 
         <div className="referral-history">
-          <h2>Referral History</h2>
+          <h2>{t('referralHistory')}</h2>
 
           {referralsError && <p className="form-error">{referralsError}</p>}
           {!referralsError && referrals === null && <p className="dashboard-loading">Loading...</p>}
@@ -511,23 +521,36 @@ function PatientDetail() {
                     <span className="referral-list-facility">
                       {referral.facility_name} ({FACILITY_TYPE_LABELS[referral.facility_type] || referral.facility_type})
                     </span>
-                    <ReferralStatusBadge status={referral.status} />
+                    <span className="referral-status-group">
+                      <span className="referral-status-label">{t('status')}:</span>
+                      <ReferralStatusBadge status={referral.status} />
+                    </span>
                   </div>
-                  <p className="referral-list-reason">{referral.reason}</p>
+                  <p className="referral-list-reason">
+                    {t('reason')}: {referral.reason}
+                  </p>
+                  {referral.referred_by_name && (
+                    <p className="referral-list-referred-by">
+                      {t('referredBy')}: {referral.referred_by_name}
+                    </p>
+                  )}
                   <span className="referral-list-date">{formatDate(referral.created_at)}</span>
 
                   {referral.previous_referral_id && (
-                    <p className="referral-followup-note">Follow-on from an earlier referral</p>
+                    <div className="referral-chain-row">
+                      <span className="chain-update-tag">{t('chainUpdate')}</span>
+                      <p className="referral-followup-note">{t('followOnNote')}</p>
+                    </div>
                   )}
 
                   {referral.follow_up_status === 'PENDING' && (
                     <p className="referral-followup-note">
-                      Follow-up due {formatDateOnly(referral.follow_up_due_date)}
+                      {t('followUpDue')} {formatDateOnly(referral.follow_up_due_date)}
                     </p>
                   )}
                   {referral.follow_up_status === 'COMPLETED' && (
                     <p className="referral-followup-note">
-                      Followed up on {formatDate(referral.follow_up_completed_at)}:{' '}
+                      {t('followedUpOn')} {formatDate(referral.follow_up_completed_at)}:{' '}
                       {referral.follow_up_notes || 'No notes added.'}
                     </p>
                   )}
@@ -562,7 +585,7 @@ function PatientDetail() {
         </div>
 
         <div className="reports-section">
-          <h2>Upload Report or Prescription</h2>
+          <h2>{t('uploadReportTitle')}</h2>
 
           <form onSubmit={handleReportUpload} noValidate>
             <div className="field">
@@ -580,18 +603,18 @@ function PatientDetail() {
             {reportError && <p className="form-error">{reportError}</p>}
 
             <button type="submit" className="primary-button" disabled={uploadingReport}>
-              {uploadingReport ? 'Uploading & Analyzing...' : 'Upload & Analyze'}
+              {uploadingReport ? 'Uploading & Analyzing...' : t('uploadAndAnalyze')}
             </button>
           </form>
         </div>
 
         <div className="reports-list">
-          <h2>Reports & Prescriptions</h2>
+          <h2>{t('yourReports')}</h2>
 
           {reportsError && <p className="form-error">{reportsError}</p>}
           {!reportsError && reports === null && <p className="dashboard-loading">Loading...</p>}
           {!reportsError && reports !== null && reports.length === 0 && (
-            <p className="dashboard-loading">No reports uploaded yet.</p>
+            <p className="dashboard-loading">{t('noReportsYet')}</p>
           )}
           {!reportsError && reports !== null && reports.length > 0 && (
             <div className="report-card-list">
@@ -602,7 +625,7 @@ function PatientDetail() {
                   )}
                   <div className="report-card-body">
                     <p className="report-summary">{report.ai_summary}</p>
-                    <p className="triage-note">AI-suggested — please use your clinical judgment.</p>
+                    <p className="triage-note">{t('aiSuggestedDisclaimer')}</p>
                     <span className="referral-list-date">{formatDate(report.created_at)}</span>
                   </div>
                 </div>

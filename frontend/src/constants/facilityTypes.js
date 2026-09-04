@@ -11,3 +11,10 @@ export const FACILITY_TYPE_COLORS = {
   CHC: '#b35900',
   DISTRICT_HOSPITAL: '#d33',
 };
+
+export const FACILITY_TYPE_LABEL_KEYS = {
+  SUB_CENTRE: 'subCentre',
+  PHC: 'phc',
+  CHC: 'chc',
+  DISTRICT_HOSPITAL: 'districtHospital',
+};

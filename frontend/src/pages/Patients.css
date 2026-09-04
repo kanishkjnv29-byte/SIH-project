@@ -243,6 +243,47 @@
   font-style: italic;
 }
 
+.referral-status-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.referral-status-label {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.referral-list-referred-by {
+  color: #444;
+  margin: 4px 0;
+  font-size: 0.85rem;
+}
+
+.referral-chain-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.referral-chain-row .referral-followup-note {
+  margin: 0;
+}
+
+.chain-update-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #6d28d9;
+  background: #f1e9fe;
+  white-space: nowrap;
+}
+
 .referral-status-actions {
   display: flex;
   gap: 14px;

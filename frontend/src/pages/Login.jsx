@@ -121,7 +121,7 @@ function Login() {
           <div className="gs-card-topbar">
             <LanguageToggle />
           </div>
-          <h1>Health Worker Log In</h1>
+          <h1>{t('healthWorkerLogin')}</h1>
 
           <form onSubmit={handleCredentialsSubmit} noValidate>
             <div className="gs-field">
@@ -132,7 +132,7 @@ function Login() {
                 type="text"
                 inputMode="numeric"
                 maxLength={12}
-                placeholder="12-digit number"
+                placeholder={t('aadhaarPlaceholder')}
                 value={aadhaarNumber}
                 onChange={(e) => setAadhaarNumber(e.target.value)}
               />
@@ -157,10 +157,10 @@ function Login() {
           </form>
 
           <p className="gs-switch">
-            Don't have an account? <Link to="/signup">{t('signup')}</Link>
+            {t('noAccountYet')} <Link to="/signup">{t('signup')}</Link>
           </p>
           <p className="gs-switch">
-            <Link to="/patient">{t('patientPortalLink')}</Link>
+            <Link to="/patient">{t('lookingForPatientStatus')}</Link>
           </p>
         </div>
       </div>

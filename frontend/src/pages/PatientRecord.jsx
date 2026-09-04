@@ -151,7 +151,7 @@ function PatientRecord() {
             {patient.abha_id && (
               <>
                 <p title={t('abhaIdNote')}>
-                  {t('abhaIdLabel')}: {patient.abha_id}
+                  {t('abhaIdDemo')}: {patient.abha_id}
                 </p>
                 <p className="patient-record-abha-note">{t('abhaIdNote')}</p>
               </>
@@ -183,11 +183,10 @@ function PatientRecord() {
                   <div className="visit-timeline-card">
                     <div className="visit-timeline-card-header">
                       <p className="visit-timeline-text">
-                        {t('youWereReferredTo')}{' '}
-                        <strong>{referral.facility_name || t('unknownFacility')}</strong>
-                        {referral.facility_type
-                          ? ` (${FACILITY_TYPE_LABELS[referral.facility_type] || referral.facility_type})`
-                          : ''}
+                        {t('referredToSentence', {
+                          facility: referral.facility_name,
+                          type: FACILITY_TYPE_LABELS[referral.facility_type] || referral.facility_type,
+                        })}
                       </p>
                       <ReferralStatusBadge status={referral.status} />
                     </div>
@@ -195,7 +194,7 @@ function PatientRecord() {
 
                     {referral.follow_up_status === 'PENDING' && (
                       <p className="visit-timeline-followup">
-                        {t('followUpDueOn')} {formatDateOnly(referral.follow_up_due_date)}
+                        {t('followUpExpected', { date: formatDateOnly(referral.follow_up_due_date) })}
                       </p>
                     )}
                     {referral.follow_up_status === 'COMPLETED' && (
@@ -216,21 +215,21 @@ function PatientRecord() {
           {patient.urgency_level ? (
             <div className="health-check-card">
               <div className="health-check-top">
-                <h3 className="health-check-title">{t('healthCheckHeading')}</h3>
+                <h3 className="health-check-title">{t('checkupFoundTitle')}</h3>
                 <UrgencyBadge level={patient.urgency_level} />
               </div>
               {patient.triage_reason && <p className="health-check-reason">{patient.triage_reason}</p>}
               <div className="health-check-guidance">
-                <p>{t('healthCheckGuidance')}</p>
+                <p>{t('talkToWorkerNote')}</p>
               </div>
             </div>
           ) : (
-            <p className="dashboard-loading">{t('nothingHereYet')}</p>
+            <p className="dashboard-loading">{t('notTriagedYet')}</p>
           )}
         </section>
 
         <section className="patient-record-section">
-          <h2 className="section-title">{t('schemeSectionTitle')}</h2>
+          <h2 className="section-title">{t('govSupportTitle')}</h2>
 
           {!patient.urgency_level ? (
             <p className="dashboard-loading">{t('schemeNotTriagedMessage')}</p>

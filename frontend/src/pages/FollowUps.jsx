@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ReferralStatusBadge from '../components/ReferralStatusBadge';
+import LanguageToggle from '../components/LanguageToggle';
 import './Dashboard.css';
 import './Patients.css';
 import './FollowUps.css';
@@ -19,7 +21,13 @@ function formatDate(dateStr) {
   return new Date(`${dateStr}T00:00:00`).toLocaleDateString();
 }
 
+function formatDateTime(isoString) {
+  if (!isoString) return '';
+  return new Date(isoString).toLocaleDateString();
+}
+
 function FollowUps() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [followUps, setFollowUps] = useState(null);
   const [error, setError] = useState('');
@@ -126,17 +134,20 @@ function FollowUps() {
   return (
     <div className="gs-followups-page">
       <div className="followups-content">
+        <div className="view-patients-topbar">
+          <LanguageToggle />
+        </div>
         <Link to="/dashboard" className="back-link">
-          ← Back to Dashboard
+          ← {t('backToDashboard')}
         </Link>
-        <h1 className="followups-title">My Follow-ups</h1>
+        <h1 className="followups-title">{t('myFollowups')}</h1>
 
         {error && <p className="form-error">{error}</p>}
 
         {!error && followUps === null && <p className="followups-loading">Loading...</p>}
 
         {!error && followUps !== null && followUps.length === 0 && (
-          <p className="followups-empty">No follow-ups assigned to you.</p>
+          <p className="followups-empty">{t('noFollowupsYet')}</p>
         )}
 
         {!error && followUps !== null && followUps.length > 0 && (
@@ -154,21 +165,33 @@ function FollowUps() {
                     <span className="followup-patient">{followUp.patient_name || 'Unknown patient'}</span>
                     <div className="followup-header-badges">
                       {followUp.source === 'CASCADE_UPDATE' && (
-                        <span className="chain-update-tag">Chain update</span>
+                        <span className="chain-update-tag">{t('chainUpdate')}</span>
                       )}
                       <ReferralStatusBadge status={followUp.status} />
                     </div>
                   </div>
-                  <p className="followup-facility">Referred to {followUp.facility_name || 'Unknown facility'}</p>
+                  <p className="followup-facility">
+                    {t('referredTo')} {followUp.facility_name || 'Unknown facility'}
+                  </p>
                   <p className={`followup-due${overdue ? ' followup-overdue' : ''}`}>
-                    Due: {formatDate(followUp.due_date)}
+                    {t('due')}: {formatDate(followUp.due_date)}
                   </p>
 
                   {followUp.status === 'COMPLETED' && (
-                    <p className="followup-notes">{followUp.notes ? followUp.notes : 'No notes added.'}</p>
+                    <>
+                      <p className="followup-notes">
+                        {t('completedOn')} {formatDateTime(followUp.completed_at)}
+                      </p>
+                      <p className="followup-notes">{followUp.notes ? followUp.notes : 'No notes added.'}</p>
+                    </>
                   )}
-                  {followUp.status === 'PENDING' && followUp.source === 'CASCADE_UPDATE' && followUp.notes && (
-                    <p className="followup-notes">{followUp.notes}</p>
+                  {followUp.status === 'PENDING' && followUp.source === 'CASCADE_UPDATE' && (
+                    <p className="followup-notes">
+                      {t('cascadeUpdateNote', {
+                        patientName: followUp.patient_name || 'Unknown patient',
+                        facilityName: followUp.cascade_facility_name || 'Unknown facility',
+                      })}
+                    </p>
                   )}
 
                   {followUp.status === 'PENDING' &&
@@ -176,7 +199,7 @@ function FollowUps() {
                       <div className="followup-complete-form">
                         <textarea
                           rows={2}
-                          placeholder="Notes (optional)"
+                          placeholder={t('addNotes')}
                           value={notesDraft}
                           onChange={(e) => setNotesDraft(e.target.value)}
                         />
@@ -188,7 +211,7 @@ function FollowUps() {
                             disabled={submittingId === followUp.id}
                             onClick={() => handleSubmitComplete(followUp.id)}
                           >
-                            {submittingId === followUp.id ? 'Saving...' : 'Confirm'}
+                            {submittingId === followUp.id ? 'Saving...' : t('submit')}
                           </button>
                           <button type="button" className="secondary-button" onClick={cancelComplete}>
                             Cancel
@@ -201,7 +224,7 @@ function FollowUps() {
                         className="followup-confirm-button"
                         onClick={() => startComplete(followUp.id)}
                       >
-                        Mark Done
+                        {t('markDone')}
                       </button>
                     ))}
                 </div>

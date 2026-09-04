@@ -8,6 +8,12 @@ import './Patients.css';
 
 const PATIENTS_URL = 'http://localhost:5000/api/patients';
 
+const GENDER_LABEL_KEYS = {
+  Male: 'male',
+  Female: 'female',
+  Other: 'other',
+};
+
 function truncate(text, length) {
   if (!text) return '';
   return text.length > length ? `${text.slice(0, length)}...` : text;
@@ -80,7 +86,7 @@ function ViewPatients() {
                   <th>{t('village')}</th>
                   <th>{t('symptoms')}</th>
                   <th>{t('addedBy')}</th>
-                  <th>Urgency</th>
+                  <th>{t('urgency')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -92,7 +98,7 @@ function ViewPatients() {
                   >
                     <td>{patient.name}</td>
                     <td>{patient.age ?? '-'}</td>
-                    <td>{patient.gender || '-'}</td>
+                    <td>{patient.gender ? (patient.gender in GENDER_LABEL_KEYS ? t(GENDER_LABEL_KEYS[patient.gender]) : patient.gender) : '-'}</td>
                     <td>{patient.village || '-'}</td>
                     <td>{truncate(patient.symptoms, 40)}</td>
                     <td>{patient.created_by_name || '-'}</td>

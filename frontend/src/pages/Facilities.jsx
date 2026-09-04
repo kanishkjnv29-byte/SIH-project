@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { FACILITY_TYPE_LABELS, FACILITY_TYPE_COLORS } from '../constants/facilityTypes';
+import LanguageToggle from '../components/LanguageToggle';
+import { FACILITY_TYPE_COLORS, FACILITY_TYPE_LABEL_KEYS } from '../constants/facilityTypes';
 import './Dashboard.css';
 import './Patients.css';
 import './Facilities.css';
@@ -38,6 +40,7 @@ function iconForType(type) {
 }
 
 function Facilities() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [facilities, setFacilities] = useState(null);
   const [error, setError] = useState('');
@@ -140,10 +143,13 @@ function Facilities() {
   return (
     <div className="dashboard-page">
       <div className="patients-container facilities-container">
+        <div className="view-patients-topbar">
+          <LanguageToggle />
+        </div>
         <Link to="/dashboard" className="back-link">
-          ← Back to Dashboard
+          ← {t('backToDashboard')}
         </Link>
-        <h1>Facilities</h1>
+        <h1>{t('facilities')}</h1>
 
         {error && <p className="form-error">{error}</p>}
 
@@ -168,9 +174,9 @@ function Facilities() {
                       <Popup>
                         <strong>{facility.name}</strong>
                         <br />
-                        {FACILITY_TYPE_LABELS[facility.type] || facility.type}
+                        {facility.type in FACILITY_TYPE_LABEL_KEYS ? t(FACILITY_TYPE_LABEL_KEYS[facility.type]) : facility.type}
                         <br />
-                        {facility.block}
+                        {t('block')}: {facility.block}
                         {facility.phone && (
                           <>
                             <br />
@@ -184,8 +190,8 @@ function Facilities() {
             </div>
 
             <div className="facilities-list">
-              <h2>All Facilities</h2>
-              {facilities.length === 0 && <p className="dashboard-loading">No facilities yet.</p>}
+              <h2>{t('allFacilities')}</h2>
+              {facilities.length === 0 && <p className="dashboard-loading">{t('noFacilitiesYet')}</p>}
               {facilities.length > 0 && (
               <ul>
                 {facilities.map((facility) => {
@@ -209,7 +215,8 @@ function Facilities() {
                       <div className="facility-list-content">
                         <strong>{facility.name}</strong>
                         <div className="facility-meta">
-                          {FACILITY_TYPE_LABELS[facility.type] || facility.type} · {facility.block || 'Unknown block'}
+                          {facility.type in FACILITY_TYPE_LABEL_KEYS ? t(FACILITY_TYPE_LABEL_KEYS[facility.type]) : facility.type} ·{' '}
+                          {facility.block ? `${t('block')}: ${facility.block}` : 'Unknown block'}
                           {facility.phone ? ` · ${facility.phone}` : ''}
                         </div>
 
@@ -218,7 +225,7 @@ function Facilities() {
                           className="link-button"
                           onClick={() => handleToggleAvailability(facility.id)}
                         >
-                          {isExpanded ? 'Hide Availability' : 'View Availability'}
+                          {isExpanded ? 'Hide Availability' : t('viewAvailability')}
                         </button>
 
                         {isExpanded && (
@@ -230,13 +237,13 @@ function Facilities() {
                             {availability && (
                               <>
                                 <div className="availability-section">
-                                  <h3 className="availability-section-title">Medicines</h3>
+                                  <h3 className="availability-section-title">{t('medicines')}</h3>
                                   {medicines.length === 0 ? (
-                                    <p className="dashboard-loading">No medicines recorded yet.</p>
+                                    <p className="dashboard-loading">{t('noMedicinesRecorded')}</p>
                                   ) : (
                                     <>
                                       <p className="medicines-summary">
-                                        {medicinesInStock}/{medicines.length} medicines available
+                                        {medicinesInStock}/{medicines.length} {t('medicines')} {t('available')}
                                       </p>
                                       <ul className="medicines-list">
                                         {medicines.map((med) => (
@@ -246,7 +253,7 @@ function Facilities() {
                                             </span>
                                             <span>{med.medicine_name}</span>
                                             {!med.in_stock && (
-                                              <span className="medicine-unavailable-badge">Not available</span>
+                                              <span className="medicine-unavailable-badge">{t('notAvailable')}</span>
                                             )}
                                           </li>
                                         ))}
@@ -256,9 +263,9 @@ function Facilities() {
                                 </div>
 
                                 <div className="availability-section">
-                                  <h3 className="availability-section-title">Specialists & Staff</h3>
+                                  <h3 className="availability-section-title">{t('specialistsStaff')}</h3>
                                   <p className="medicines-summary">
-                                    {specialtiesPresent}/{staff.length} specialties present
+                                    {specialtiesPresent}/{staff.length} {t('specialistsStaff')} {t('available')}
                                   </p>
                                   <ul className="medicines-list">
                                     {staff.map((s) => (
@@ -271,7 +278,7 @@ function Facilities() {
                                             s.available_count === 0 ? ' staff-count-zero' : ''
                                           }`}
                                         >
-                                          {s.available_count} available
+                                          {s.available_count} {t('available')}
                                         </span>
                                       </li>
                                     ))}
@@ -279,9 +286,9 @@ function Facilities() {
                                 </div>
 
                                 <div className="availability-section">
-                                  <h3 className="availability-section-title">Equipment</h3>
+                                  <h3 className="availability-section-title">{t('equipment')}</h3>
                                   <p className="medicines-summary">
-                                    {equipmentAvailable}/{equipment.length} equipment available
+                                    {equipmentAvailable}/{equipment.length} {t('equipment')} {t('available')}
                                   </p>
                                   <ul className="medicines-list">
                                     {equipment.map((eq) => (
@@ -291,7 +298,7 @@ function Facilities() {
                                         </span>
                                         <span>{eq.equipment_name}</span>
                                         {!eq.available && (
-                                          <span className="medicine-unavailable-badge">Not available</span>
+                                          <span className="medicine-unavailable-badge">{t('notAvailable')}</span>
                                         )}
                                       </li>
                                     ))}
