@@ -16,15 +16,19 @@ router.get('/', authenticate, asyncHandler(async (req, res) => {
     { data: triagedPatients, error: triagedError },
     { data: allReferrals, error: referralStatusError },
   ] = await Promise.all([
-    supabase.from('patients').select('*', { count: 'exact', head: true }),
-    supabase.from('referrals').select('*', { count: 'exact', head: true }),
+    supabase.from('patients').select('*', { count: 'exact', head: true }).eq('created_by', req.worker.id),
+    supabase.from('referrals').select('*', { count: 'exact', head: true }).eq('referred_by', req.worker.id),
     supabase
       .from('follow_ups')
       .select('*', { count: 'exact', head: true })
       .eq('assigned_to', req.worker.id)
       .eq('status', 'PENDING'),
-    supabase.from('patients').select('urgency_level').not('urgency_level', 'is', null),
-    supabase.from('referrals').select('status'),
+    supabase
+      .from('patients')
+      .select('urgency_level')
+      .not('urgency_level', 'is', null)
+      .eq('created_by', req.worker.id),
+    supabase.from('referrals').select('status').eq('referred_by', req.worker.id),
   ]);
 
   const error = patientsError || referralsError || followUpsError || triagedError || referralStatusError;

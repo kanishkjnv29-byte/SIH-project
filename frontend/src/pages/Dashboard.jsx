@@ -114,7 +114,11 @@ function Dashboard() {
           const all = await followUpsRes.json();
           const pending = all
             .filter((f) => f.status === 'PENDING')
-            .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))
+            .sort((a, b) => {
+              const dueDateDiff = new Date(a.due_date) - new Date(b.due_date);
+              if (dueDateDiff !== 0) return dueDateDiff;
+              return new Date(b.created_at) - new Date(a.created_at);
+            })
             .slice(0, 3);
           setDueToday(pending);
         } else {

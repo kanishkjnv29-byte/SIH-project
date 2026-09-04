@@ -30,7 +30,9 @@ router.get('/', authenticate, asyncHandler(async (req, res) => {
       if (a.status === 'PENDING' && a.source !== b.source) {
         return a.source === 'CASCADE_UPDATE' ? -1 : 1;
       }
-      return new Date(a.due_date) - new Date(b.due_date);
+      const dueDateDiff = new Date(a.due_date) - new Date(b.due_date);
+      if (dueDateDiff !== 0) return dueDateDiff;
+      return new Date(b.created_at) - new Date(a.created_at);
     });
 
   return res.json(followUps);
