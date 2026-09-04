@@ -8,9 +8,7 @@ import {
   parseTriageResponse,
   reportSummaryModel,
   buildReportSummaryPrompt,
-  schemeCheckModel,
-  buildSchemeCheckPrompt,
-  PMJAY_VERIFICATION_NOTE,
+  runSchemeCheck,
 } from '../lib/geminiClient.js';
 
 const router = Router();
@@ -193,22 +191,13 @@ router.post('/:id/scheme-check', authenticate, async (req, res) => {
     return res.status(404).json({ error: 'Patient not found.' });
   }
 
-  const prompt = buildSchemeCheckPrompt(patient);
-
-  let note;
+  let schemeSuggestion;
   try {
-    const result = await schemeCheckModel.generateContent(prompt);
-    note = result.response.text().trim();
+    schemeSuggestion = await runSchemeCheck(patient);
   } catch (err) {
     console.error('Gemini scheme check error:', err.message);
     return res.status(502).json({ error: 'Could not check scheme benefits right now. Please try again.' });
   }
-
-  if (!note) {
-    return res.status(502).json({ error: 'Could not check scheme benefits right now. Please try again.' });
-  }
-
-  const schemeSuggestion = `${note} ${PMJAY_VERIFICATION_NOTE}`;
 
   const { data: updated, error: updateError } = await supabase
     .from('patients')

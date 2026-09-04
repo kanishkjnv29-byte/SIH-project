@@ -72,5 +72,8 @@
   "nothingHereYet": "Nothing here yet",
   "abhaIdLabel": "ABHA ID (Demo)",
   "abhaIdNote": "Simulated for this demo — real ABHA integration requires government certification.",
-  "schemeSectionTitle": "Government support that might help"
+  "schemeSectionTitle": "Government support that might help",
+  "schemeCheckButton": "Check what support might be available",
+  "schemeChecking": "Checking...",
+  "schemeNotTriagedMessage": "Your health worker hasn't completed a check-up yet — ask them at your next visit."
 }

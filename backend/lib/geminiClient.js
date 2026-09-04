@@ -39,6 +39,18 @@ In 2-3 short, plain-language sentences, explain whether this patient's situation
 Respond with ONLY those 2-3 sentences. Do not include a heading, a disclaimer, or a closing statement — a closing statement will be added separately.`;
 }
 
+export async function runSchemeCheck({ age, symptoms, urgency_level, triage_reason }) {
+  const prompt = buildSchemeCheckPrompt({ age, symptoms, urgency_level, triage_reason });
+  const result = await schemeCheckModel.generateContent(prompt);
+  const note = result.response.text().trim();
+
+  if (!note) {
+    throw new Error('Gemini returned an empty scheme-check response');
+  }
+
+  return `${note} ${PMJAY_VERIFICATION_NOTE}`;
+}
+
 export function buildReportSummaryPrompt() {
   return `You are a decision-support tool assisting a trained ASHA or Primary Health Centre (PHC) health worker in rural India. You are NOT providing a diagnosis — you are only helping them quickly understand a document a patient has brought in.
 

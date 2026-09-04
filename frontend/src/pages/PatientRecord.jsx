@@ -34,6 +34,8 @@ function PatientRecord() {
   const [record, setRecord] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [schemeChecking, setSchemeChecking] = useState(false);
+  const [schemeError, setSchemeError] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('patient_token');
@@ -73,6 +75,49 @@ function PatientRecord() {
   function handleExit() {
     localStorage.removeItem('patient_token');
     navigate('/patient', { replace: true });
+  }
+
+  async function handleSchemeCheck() {
+    const token = localStorage.getItem('patient_token');
+    if (!token) {
+      navigate('/patient', { replace: true });
+      return;
+    }
+
+    setSchemeChecking(true);
+    setSchemeError('');
+    try {
+      const res = await fetch(`${PATIENT_PORTAL_URL}/${patientId}/scheme-check`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.status === 401) {
+        localStorage.removeItem('patient_token');
+        navigate('/patient', { replace: true });
+        return;
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSchemeError(data.error || 'Something went wrong. Please try again.');
+        return;
+      }
+
+      setRecord((prev) => ({
+        ...prev,
+        patient: {
+          ...prev.patient,
+          scheme_suggestion: data.scheme_suggestion,
+          scheme_checked_at: data.scheme_checked_at,
+        },
+      }));
+    } catch {
+      setSchemeError('Could not reach the server. Please try again.');
+    } finally {
+      setSchemeChecking(false);
+    }
   }
 
   if (loading) {
@@ -184,14 +229,29 @@ function PatientRecord() {
           )}
         </section>
 
-        {patient.scheme_suggestion && (
-          <section className="patient-record-section">
-            <h2 className="section-title">{t('schemeSectionTitle')}</h2>
+        <section className="patient-record-section">
+          <h2 className="section-title">{t('schemeSectionTitle')}</h2>
+
+          {!patient.urgency_level ? (
+            <p className="dashboard-loading">{t('schemeNotTriagedMessage')}</p>
+          ) : patient.scheme_suggestion ? (
             <div className="scheme-suggestion-card">
               <p className="scheme-suggestion-text">{patient.scheme_suggestion}</p>
             </div>
-          </section>
-        )}
+          ) : (
+            <>
+              <button
+                type="button"
+                className="scheme-check-button"
+                onClick={handleSchemeCheck}
+                disabled={schemeChecking}
+              >
+                {schemeChecking ? t('schemeChecking') : t('schemeCheckButton')}
+              </button>
+              {schemeError && <p className="patient-record-error">{schemeError}</p>}
+            </>
+          )}
+        </section>
 
         <section className="patient-record-section">
           <h2 className="section-title">{t('yourReports')}</h2>

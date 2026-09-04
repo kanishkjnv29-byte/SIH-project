@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { supabase } from '../lib/supabaseClient.js';
 import { authenticatePatient } from '../middleware/patientAuth.js';
+import { runSchemeCheck } from '../lib/geminiClient.js';
 
 const router = Router();
 
@@ -83,6 +84,62 @@ router.get('/:patientId', authenticatePatient, async (req, res) => {
   );
 
   return res.json({ patient: patientData, referrals, reports });
+});
+
+router.post('/:patientId/scheme-check', authenticatePatient, async (req, res) => {
+  const { patientId } = req.params;
+
+  if (!UUID_RE.test(patientId)) {
+    return res.status(404).json({ error: 'Record not found.' });
+  }
+
+  const { data: patient, error: fetchError } = await supabase
+    .from('patients')
+    .select('id, age, symptoms, urgency_level, triage_reason, phone')
+    .eq('id', patientId)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error('Patient portal scheme check fetch error:', fetchError.message);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+  if (!patient || patient.phone !== req.patient.phone) {
+    return res.status(404).json({ error: 'Record not found.' });
+  }
+
+  if (!patient.urgency_level) {
+    return res.json({
+      scheme_suggestion: null,
+      scheme_checked_at: null,
+      message: "Your health worker hasn't completed a check-up yet — ask them at your next visit.",
+    });
+  }
+
+  let schemeSuggestion;
+  try {
+    schemeSuggestion = await runSchemeCheck(patient);
+  } catch (err) {
+    console.error('Patient portal Gemini scheme check error:', err.message);
+    return res.status(502).json({ error: 'Could not check scheme benefits right now. Please try again.' });
+  }
+
+  const scheme_checked_at = new Date().toISOString();
+
+  const { error: updateError } = await supabase
+    .from('patients')
+    .update({
+      scheme_suggestion: schemeSuggestion,
+      scheme_checked_at,
+    })
+    .eq('id', patientId);
+
+  if (updateError) {
+    console.error('Patient portal scheme check update error:', updateError.message);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+  return res.json({ scheme_suggestion: schemeSuggestion, scheme_checked_at });
 });
 
 export default router;
