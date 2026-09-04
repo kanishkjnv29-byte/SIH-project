@@ -59,6 +59,19 @@ router.post('/', authenticate, async (req, res) => {
     return res.status(404).json({ error: 'Facility not found.' });
   }
 
+  const { data: priorReferral, error: priorError } = await supabase
+    .from('referrals')
+    .select('id')
+    .eq('patient_id', patient_id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (priorError) {
+    console.error('Referral chain lookup error:', priorError.message);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
   const { data: inserted, error: insertError } = await supabase
     .from('referrals')
     .insert({
@@ -66,6 +79,7 @@ router.post('/', authenticate, async (req, res) => {
       facility_id,
       referred_by: req.worker.id,
       reason: reason.trim(),
+      previous_referral_id: priorReferral?.id || null,
     })
     .select('*, facility:facilities(name, type)')
     .single();
@@ -108,7 +122,7 @@ router.patch('/:id/status', authenticate, async (req, res) => {
     .from('referrals')
     .update({ status })
     .eq('id', id)
-    .select('*, facility:facilities(name, type)')
+    .select('*, facility:facilities(name, type), patient:patients(name)')
     .maybeSingle();
 
   if (error) {
@@ -119,7 +133,43 @@ router.patch('/:id/status', authenticate, async (req, res) => {
     return res.status(404).json({ error: 'Referral not found.' });
   }
 
-  const { facility: facilityData, ...referral } = updated;
+  if (status === 'COMPLETED') {
+    const patientName = updated.patient?.name || 'The patient';
+    const facilityName = updated.facility?.name || 'the facility';
+    const cascadeNote = `Update: ${patientName} was marked Completed at ${facilityName}`;
+    const today = addDaysAsDateString(0);
+
+    let previousId = updated.previous_referral_id;
+    while (previousId) {
+      const { data: earlierReferral, error: earlierError } = await supabase
+        .from('referrals')
+        .select('id, referred_by, previous_referral_id')
+        .eq('id', previousId)
+        .maybeSingle();
+
+      if (earlierError || !earlierReferral) {
+        console.error('Referral chain walk error:', earlierError?.message);
+        break;
+      }
+
+      const { error: cascadeError } = await supabase.from('follow_ups').insert({
+        referral_id: earlierReferral.id,
+        assigned_to: earlierReferral.referred_by,
+        due_date: today,
+        status: 'PENDING',
+        source: 'CASCADE_UPDATE',
+        notes: cascadeNote,
+      });
+
+      if (cascadeError) {
+        console.error('Cascade follow-up insert error:', cascadeError.message);
+      }
+
+      previousId = earlierReferral.previous_referral_id;
+    }
+  }
+
+  const { facility: facilityData, patient: patientData, ...referral } = updated;
   return res.json({
     ...referral,
     facility_name: facilityData?.name || null,

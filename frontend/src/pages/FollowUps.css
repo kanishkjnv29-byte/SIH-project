@@ -22,12 +22,35 @@
   color: #999;
 }
 
+.followup-card.followup-cascade {
+  border-left: 3px solid #7c3aed;
+}
+
 .followup-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 8px;
+}
+
+.followup-header-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.chain-update-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #6d28d9;
+  background: #f1e9fe;
+  white-space: nowrap;
 }
 
 .followup-patient {

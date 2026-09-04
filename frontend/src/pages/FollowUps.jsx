@@ -146,11 +146,18 @@ function FollowUps() {
               return (
                 <div
                   key={followUp.id}
-                  className={`followup-card${followUp.status === 'COMPLETED' ? ' followup-completed' : ''}`}
+                  className={`followup-card${followUp.status === 'COMPLETED' ? ' followup-completed' : ''}${
+                    followUp.source === 'CASCADE_UPDATE' ? ' followup-cascade' : ''
+                  }`}
                 >
                   <div className="followup-card-header">
                     <span className="followup-patient">{followUp.patient_name || 'Unknown patient'}</span>
-                    <ReferralStatusBadge status={followUp.status} />
+                    <div className="followup-header-badges">
+                      {followUp.source === 'CASCADE_UPDATE' && (
+                        <span className="chain-update-tag">Chain update</span>
+                      )}
+                      <ReferralStatusBadge status={followUp.status} />
+                    </div>
                   </div>
                   <p className="followup-facility">Referred to {followUp.facility_name || 'Unknown facility'}</p>
                   <p className={`followup-due${overdue ? ' followup-overdue' : ''}`}>
@@ -159,6 +166,9 @@ function FollowUps() {
 
                   {followUp.status === 'COMPLETED' && (
                     <p className="followup-notes">{followUp.notes ? followUp.notes : 'No notes added.'}</p>
+                  )}
+                  {followUp.status === 'PENDING' && followUp.source === 'CASCADE_UPDATE' && followUp.notes && (
+                    <p className="followup-notes">{followUp.notes}</p>
                   )}
 
                   {followUp.status === 'PENDING' &&

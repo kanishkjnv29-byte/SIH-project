@@ -449,6 +449,10 @@ function PatientDetail() {
                   <p className="referral-list-reason">{referral.reason}</p>
                   <span className="referral-list-date">{formatDate(referral.created_at)}</span>
 
+                  {referral.previous_referral_id && (
+                    <p className="referral-followup-note">Follow-on from an earlier referral</p>
+                  )}
+
                   {referral.follow_up_status === 'PENDING' && (
                     <p className="referral-followup-note">
                       Follow-up due {formatDateOnly(referral.follow_up_due_date)}
