@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import { supabase } from '../lib/supabaseClient.js';
 import { authenticate } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
 
 const URGENCY_LEVELS = ['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY'];
 const REFERRAL_STATUSES = ['PENDING', 'ACKNOWLEDGED', 'COMPLETED'];
 
-router.get('/', authenticate, async (req, res) => {
+router.get('/', authenticate, asyncHandler(async (req, res) => {
   const [
     { count: total_patients, error: patientsError },
     { count: total_referrals, error: referralsError },
@@ -53,6 +54,6 @@ router.get('/', authenticate, async (req, res) => {
     urgency_breakdown,
     referral_status_breakdown,
   });
-});
+}));
 
 export default router;

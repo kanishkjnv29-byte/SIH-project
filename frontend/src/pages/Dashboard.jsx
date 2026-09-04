@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { LogOut, UserPlus, Users, MapPin, ClipboardList } from 'lucide-react';
 import LanguageToggle from '../components/LanguageToggle';
 import { ROLE_LABEL_KEYS } from '../i18n/roleLabels';
 import './Dashboard.css';
@@ -152,39 +153,46 @@ function Dashboard() {
 
   return (
     <div className="gs-dashboard-page">
-      <header className="dashboard-header">
-        <div className="dashboard-header-inner">
-          <div>
-            <h1>{worker.name}</h1>
-            <p>
+      <header className="dashboard-topbar">
+        <div className="dashboard-topbar-inner">
+          <div className="dashboard-worker-info">
+            <span className="dashboard-worker-name">{worker.name}</span>
+            <span className="dashboard-worker-meta">
               {t(ROLE_LABEL_KEYS[worker.role] || worker.role)} · {worker.facility_name || 'No facility set'}
-            </p>
+            </span>
           </div>
-          <div className="dashboard-header-actions">
-            <LanguageToggle className="language-toggle--on-dark" />
-            <button type="button" className="logout-button" onClick={handleLogout}>
+          <div className="dashboard-topbar-actions">
+            <LanguageToggle />
+            <button type="button" className="dashboard-logout" onClick={handleLogout}>
+              <LogOut size={16} strokeWidth={2} />
               {t('logout')}
             </button>
           </div>
         </div>
       </header>
 
-      <main className="dashboard-content">
-        <nav className="dashboard-actions">
-          <Link to="/patients/new" className="dashboard-action">
-            {t('addNewPatient')}
+      <nav className="dashboard-nav">
+        <div className="dashboard-nav-inner">
+          <Link to="/patients/new" className="dashboard-nav-item">
+            <UserPlus size={18} strokeWidth={1.75} />
+            <span>{t('addNewPatient')}</span>
           </Link>
-          <Link to="/patients" className="dashboard-action">
-            {t('viewPatients')}
+          <Link to="/patients" className="dashboard-nav-item">
+            <Users size={18} strokeWidth={1.75} />
+            <span>{t('viewPatients')}</span>
           </Link>
-          <Link to="/facilities" className="dashboard-action">
-            {t('facilities')}
+          <Link to="/facilities" className="dashboard-nav-item">
+            <MapPin size={18} strokeWidth={1.75} />
+            <span>{t('facilities')}</span>
           </Link>
-          <Link to="/follow-ups" className="dashboard-action">
-            {t('myFollowups')}
+          <Link to="/follow-ups" className="dashboard-nav-item">
+            <ClipboardList size={18} strokeWidth={1.75} />
+            <span>{t('myFollowups')}</span>
           </Link>
-        </nav>
+        </div>
+      </nav>
 
+      <main className="dashboard-content">
         <section className="due-today-section">
           <h2 className="section-title">{t('dueToday')}</h2>
 

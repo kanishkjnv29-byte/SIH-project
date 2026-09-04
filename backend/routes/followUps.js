@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { supabase } from '../lib/supabaseClient.js';
 import { authenticate } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
 
-router.get('/', authenticate, async (req, res) => {
+router.get('/', authenticate, asyncHandler(async (req, res) => {
   const { data, error } = await supabase
     .from('follow_ups')
     .select('*, referral:referrals(patient:patients(name, urgency_level), facility:facilities(name))')
@@ -33,9 +34,9 @@ router.get('/', authenticate, async (req, res) => {
     });
 
   return res.json(followUps);
-});
+}));
 
-router.patch('/:id/complete', authenticate, async (req, res) => {
+router.patch('/:id/complete', authenticate, asyncHandler(async (req, res) => {
   const { notes } = req.body || {};
   const { id } = req.params;
 
@@ -77,6 +78,6 @@ router.patch('/:id/complete', authenticate, async (req, res) => {
   }
 
   return res.json(updated);
-});
+}));
 
 export default router;

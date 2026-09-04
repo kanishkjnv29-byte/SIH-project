@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f4f6f8;
+  background: var(--color-bg);
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   padding: 24px;
   box-sizing: border-box;
@@ -13,9 +13,10 @@
 .auth-card {
   width: 100%;
   max-width: 420px;
-  background: #ffffff;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(30, 27, 61, 0.06);
   padding: 32px;
   box-sizing: border-box;
 }
@@ -30,12 +31,12 @@
   font-size: 1.4rem;
   margin: 0 0 24px;
   text-align: center;
-  color: #1a2333;
+  color: var(--color-ink);
 }
 
 .auth-card p.subtitle {
   text-align: center;
-  color: #555;
+  color: var(--color-ink-muted);
   font-size: 0.9rem;
   margin: -16px 0 24px;
 }
@@ -49,7 +50,7 @@
 .field label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #333;
+  color: var(--color-ink);
   margin-bottom: 6px;
 }
 
@@ -58,30 +59,30 @@
 .field textarea {
   font-size: 1rem;
   padding: 10px 12px;
-  border: 1px solid #cbd2d9;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   outline: none;
-  background: #fff;
+  background: var(--color-surface);
   font-family: inherit;
-  color: #1a2333;
+  color: var(--color-ink);
 }
 
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color: #3366ff;
+  border-color: var(--color-primary);
 }
 
 .field-error {
-  color: #d33;
+  color: var(--color-urgency-emergency);
   font-size: 0.8rem;
   margin: 6px 0 0;
 }
 
 .form-error {
-  color: #d33;
-  background: #fdecea;
-  border: 1px solid #f5c2c0;
+  color: var(--color-urgency-emergency);
+  background: color-mix(in srgb, var(--color-urgency-emergency) 10%, white);
+  border: 1px solid color-mix(in srgb, var(--color-urgency-emergency) 30%, white);
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 0.9rem;
@@ -89,9 +90,9 @@
 }
 
 .form-success {
-  color: #1a7f37;
-  background: #e6f4ea;
-  border: 1px solid #b7e1c1;
+  color: var(--color-urgency-low);
+  background: color-mix(in srgb, var(--color-urgency-low) 10%, white);
+  border: 1px solid color-mix(in srgb, var(--color-urgency-low) 30%, white);
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 0.9rem;
@@ -99,9 +100,9 @@
 }
 
 .form-warning {
-  color: #8a5a00;
-  background: #fff3d6;
-  border: 1px solid #f0d98c;
+  color: var(--color-urgency-medium);
+  background: color-mix(in srgb, var(--color-urgency-medium) 12%, white);
+  border: 1px solid color-mix(in srgb, var(--color-urgency-medium) 35%, white);
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 0.9rem;
@@ -109,13 +110,13 @@
 }
 
 .demo-otp-box {
-  background: #fff8e6;
-  border: 1px solid #f0d98c;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 12px 14px;
   margin: 0 0 20px;
   font-size: 0.9rem;
-  color: #6b5500;
+  color: var(--color-ink);
 }
 
 .demo-otp-box strong {
@@ -127,7 +128,7 @@
   font-size: 1.4rem;
   font-weight: 700;
   letter-spacing: 4px;
-  color: #1a2333;
+  color: var(--color-primary);
 }
 
 button[type='submit'] {
@@ -136,30 +137,30 @@ button[type='submit'] {
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  background: #3366ff;
+  background: var(--color-primary);
   border: none;
   border-radius: 8px;
   cursor: pointer;
 }
 
 button[type='submit']:hover:not(:disabled) {
-  background: #2952cc;
+  background: var(--color-primary-hover);
 }
 
 button[type='submit']:disabled {
-  background: #a3b3e0;
+  background: color-mix(in srgb, var(--color-primary) 45%, white);
   cursor: not-allowed;
 }
 
 .auth-switch {
   text-align: center;
   font-size: 0.85rem;
-  color: #555;
+  color: var(--color-ink-muted);
   margin: 20px 0 0;
 }
 
 .auth-switch a {
-  color: #3366ff;
+  color: var(--color-primary);
   font-weight: 600;
   text-decoration: none;
 }

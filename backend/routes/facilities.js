@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { supabase } from '../lib/supabaseClient.js';
 import { authenticate } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
 
-router.get('/', authenticate, async (req, res) => {
+router.get('/', authenticate, asyncHandler(async (req, res) => {
   const { data, error } = await supabase.from('facilities').select('*');
 
   if (error) {
@@ -13,9 +14,9 @@ router.get('/', authenticate, async (req, res) => {
   }
 
   return res.json(data);
-});
+}));
 
-router.get('/:id/medicines', authenticate, async (req, res) => {
+router.get('/:id/medicines', authenticate, asyncHandler(async (req, res) => {
   const { data, error } = await supabase
     .from('facility_medicines')
     .select('*')
@@ -28,9 +29,9 @@ router.get('/:id/medicines', authenticate, async (req, res) => {
   }
 
   return res.json(data);
-});
+}));
 
-router.get('/:id/staff', authenticate, async (req, res) => {
+router.get('/:id/staff', authenticate, asyncHandler(async (req, res) => {
   const { data, error } = await supabase
     .from('facility_staff')
     .select('*')
@@ -43,9 +44,9 @@ router.get('/:id/staff', authenticate, async (req, res) => {
   }
 
   return res.json(data);
-});
+}));
 
-router.get('/:id/equipment', authenticate, async (req, res) => {
+router.get('/:id/equipment', authenticate, asyncHandler(async (req, res) => {
   const { data, error } = await supabase
     .from('facility_equipment')
     .select('*')
@@ -58,6 +59,6 @@ router.get('/:id/equipment', authenticate, async (req, res) => {
   }
 
   return res.json(data);
-});
+}));
 
 export default router;

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { supabase } from '../lib/supabaseClient.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
 
@@ -12,7 +13,7 @@ function generateOtp() {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
-router.post('/request-otp', async (req, res) => {
+router.post('/request-otp', asyncHandler(async (req, res) => {
   const { phone } = req.body || {};
 
   if (typeof phone !== 'string' || !/^\d{10}$/.test(phone)) {
@@ -45,9 +46,9 @@ router.post('/request-otp', async (req, res) => {
     demo_otp: otp,
     demo_note: 'DEMO MODE: In the real app this code would be sent by SMS. It is shown here because SMS delivery is not set up yet.',
   });
-});
+}));
 
-router.post('/verify-otp', async (req, res) => {
+router.post('/verify-otp', asyncHandler(async (req, res) => {
   const { phone, otp } = req.body || {};
 
   if (typeof phone !== 'string' || typeof otp !== 'string') {
@@ -89,6 +90,6 @@ router.post('/verify-otp', async (req, res) => {
   const token = jwt.sign({ type: 'patient', phone }, process.env.JWT_SECRET, { expiresIn: '8h' });
 
   return res.json({ token, patients });
-});
+}));
 
 export default router;

@@ -3,7 +3,7 @@
 }
 
 .facilities-map-wrapper {
-  border: 1px solid #e2e6ea;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 24px;
@@ -19,8 +19,8 @@
 }
 
 .facilities-list {
-  background: #fff;
-  border: 1px solid #e2e6ea;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 20px;
 }
@@ -28,7 +28,7 @@
 .facilities-list h2 {
   font-size: 1rem;
   margin: 0 0 12px;
-  color: #1a2333;
+  color: var(--color-ink);
 }
 
 .facilities-list ul {
@@ -42,7 +42,7 @@
   align-items: flex-start;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid #f0f2f4;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .facility-list-item:last-child {
@@ -59,7 +59,7 @@
 
 .facility-meta {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--color-ink-muted);
   margin-top: 2px;
 }
 
@@ -74,7 +74,7 @@
   padding: 0;
   background: none;
   border: none;
-  color: #3366ff;
+  color: var(--color-primary);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -87,8 +87,8 @@
 .availability-panel {
   margin-top: 10px;
   padding: 12px 14px;
-  background: #f9fafb;
-  border: 1px solid #eceff1;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 }
 
@@ -104,7 +104,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #888;
+  color: var(--color-ink-muted);
   margin: 0 0 6px;
   font-weight: 700;
 }
@@ -112,7 +112,7 @@
 .medicines-summary {
   margin: 0 0 8px;
   font-weight: 600;
-  color: #1a2333;
+  color: var(--color-ink);
   font-size: 0.9rem;
 }
 
@@ -128,16 +128,16 @@
   gap: 8px;
   padding: 4px 0;
   font-size: 0.9rem;
-  color: #333;
+  color: var(--color-ink);
 }
 
 .medicine-check {
-  color: #1a7f37;
+  color: var(--color-urgency-low);
   font-weight: 700;
 }
 
 .medicine-cross {
-  color: #999;
+  color: var(--color-ink-muted);
   font-weight: 700;
 }
 
@@ -145,28 +145,28 @@
   margin-left: auto;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #888;
-  background: #eceff1;
+  color: var(--color-ink-muted);
+  background: var(--color-surface-alt);
   padding: 2px 8px;
   border-radius: 999px;
 }
 
 .staff-name-unavailable {
-  color: #999;
+  color: var(--color-ink-muted);
 }
 
 .staff-count-badge {
   margin-left: auto;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #1e50c9;
-  background: #e3edff;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 15%, white);
   padding: 2px 8px;
   border-radius: 999px;
   white-space: nowrap;
 }
 
 .staff-count-badge.staff-count-zero {
-  color: #888;
-  background: #eceff1;
+  color: var(--color-ink-muted);
+  background: var(--color-surface-alt);
 }

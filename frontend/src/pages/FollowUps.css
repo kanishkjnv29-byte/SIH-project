@@ -53,7 +53,7 @@
 }
 
 .followup-card.followup-cascade {
-  border-left: 4px solid #7c3aed;
+  border-left: 4px solid var(--color-primary);
 }
 
 .followup-card-header {
@@ -78,8 +78,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.5px;
-  color: #6d28d9;
-  background: #f1e9fe;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, white);
   white-space: nowrap;
 }
 

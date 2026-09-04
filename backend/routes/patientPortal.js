@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { supabase } from '../lib/supabaseClient.js';
 import { authenticatePatient } from '../middleware/patientAuth.js';
 import { runSchemeCheck } from '../lib/geminiClient.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
 
@@ -9,7 +10,7 @@ const REPORT_BUCKET = 'patient-reports';
 const SIGNED_URL_TTL_SECONDS = 60 * 60;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-router.get('/:patientId', authenticatePatient, async (req, res) => {
+router.get('/:patientId', authenticatePatient, asyncHandler(async (req, res) => {
   const { patientId } = req.params;
 
   if (!UUID_RE.test(patientId)) {
@@ -84,9 +85,9 @@ router.get('/:patientId', authenticatePatient, async (req, res) => {
   );
 
   return res.json({ patient: patientData, referrals, reports });
-});
+}));
 
-router.post('/:patientId/scheme-check', authenticatePatient, async (req, res) => {
+router.post('/:patientId/scheme-check', authenticatePatient, asyncHandler(async (req, res) => {
   const { patientId } = req.params;
 
   if (!UUID_RE.test(patientId)) {
@@ -140,6 +141,6 @@ router.post('/:patientId/scheme-check', authenticatePatient, async (req, res) =>
   }
 
   return res.json({ scheme_suggestion: schemeSuggestion, scheme_checked_at });
-});
+}));
 
 export default router;

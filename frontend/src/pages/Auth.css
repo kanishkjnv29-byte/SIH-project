@@ -128,8 +128,8 @@
 }
 
 .gs-demo-box {
-  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
-  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 14px 16px;
   margin: 0 0 20px;
@@ -144,7 +144,7 @@
 .gs-demo-label {
   display: block;
   margin-bottom: 4px;
-  color: var(--color-accent);
+  color: var(--color-primary);
   text-transform: uppercase;
   font-size: 0.72rem;
   font-weight: 700;

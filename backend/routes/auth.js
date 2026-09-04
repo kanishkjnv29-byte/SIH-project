@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { supabase } from '../lib/supabaseClient.js';
 import { authenticate } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
 
@@ -16,7 +17,7 @@ function generateOtp() {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', asyncHandler(async (req, res) => {
   const { aadhaar_number, password, name, role, facility_name } = req.body || {};
 
   if (typeof aadhaar_number !== 'string' || !/^\d{12}$/.test(aadhaar_number)) {
@@ -67,9 +68,9 @@ router.post('/signup', async (req, res) => {
     id: inserted.id,
     name: inserted.name,
   });
-});
+}));
 
-router.post('/login', async (req, res) => {
+router.post('/login', asyncHandler(async (req, res) => {
   const { aadhaar_number, password } = req.body || {};
 
   if (typeof aadhaar_number !== 'string' || typeof password !== 'string') {
@@ -108,9 +109,9 @@ router.post('/login', async (req, res) => {
     demo_otp: otp,
     demo_note: 'DEMO MODE: In the real app this code would be sent by SMS. It is shown here because SMS delivery is not set up yet.',
   });
-});
+}));
 
-router.post('/verify-otp', async (req, res) => {
+router.post('/verify-otp', asyncHandler(async (req, res) => {
   const { aadhaar_number, otp } = req.body || {};
 
   if (typeof aadhaar_number !== 'string' || typeof otp !== 'string') {
@@ -148,9 +149,9 @@ router.post('/verify-otp', async (req, res) => {
     role: entry.worker.role,
     facility_name: entry.worker.facility_name,
   });
-});
+}));
 
-router.get('/me', authenticate, async (req, res) => {
+router.get('/me', authenticate, asyncHandler(async (req, res) => {
   const { data: worker, error } = await supabase
     .from('health_workers')
     .select('id, name, role, facility_name')
@@ -166,6 +167,6 @@ router.get('/me', authenticate, async (req, res) => {
   }
 
   return res.json(worker);
-});
+}));
 
 export default router;

@@ -8,7 +8,7 @@
 
 .patients-container h1 {
   font-size: 1.3rem;
-  color: #1a2333;
+  color: var(--color-ink);
   margin: 0 0 20px;
 }
 
@@ -20,8 +20,8 @@
 
 .patients-table-wrapper {
   overflow-x: auto;
-  background: #ffffff;
-  border: 1px solid #e2e6ea;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 }
 
@@ -39,14 +39,14 @@
 }
 
 .patients-table th {
-  color: #666;
+  color: var(--color-ink-muted);
   font-weight: 600;
-  border-bottom: 1px solid #e2e6ea;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .patients-row {
   cursor: pointer;
-  border-bottom: 1px solid #f0f2f4;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .patients-row:last-child {
@@ -54,7 +54,7 @@
 }
 
 .patients-row:hover {
-  background: #f4f6f8;
+  background: var(--color-surface-alt);
 }
 
 .symptoms-input-row {
@@ -67,17 +67,17 @@
   flex: 1;
   font-size: 1rem;
   padding: 10px 12px;
-  border: 1px solid #cbd2d9;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   outline: none;
-  background: #fff;
-  color: #1a2333;
+  background: var(--color-surface);
+  color: var(--color-ink);
   font-family: inherit;
   resize: vertical;
 }
 
 .symptoms-input-row textarea:focus {
-  border-color: #3366ff;
+  border-color: var(--color-primary);
 }
 
 .mic-lang-select {
@@ -86,10 +86,10 @@
   height: 44px;
   padding: 0 8px;
   font-size: 0.8rem;
-  border: 1px solid #cbd2d9;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
-  color: #1a2333;
+  background: var(--color-surface);
+  color: var(--color-ink);
 }
 
 .mic-button {
@@ -97,20 +97,20 @@
   width: 44px;
   height: 44px;
   font-size: 1.2rem;
-  border: 1px solid #cbd2d9;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-surface);
   cursor: pointer;
 }
 
 .mic-button:hover {
-  border-color: #3366ff;
+  border-color: var(--color-primary);
 }
 
 .mic-button.listening {
-  background: #fdecea;
-  border-color: #d33;
-  color: #d33;
+  background: color-mix(in srgb, var(--color-urgency-emergency) 10%, white);
+  border-color: var(--color-urgency-emergency);
+  color: var(--color-urgency-emergency);
 }
 
 .urgency-badge {
@@ -147,7 +147,7 @@
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 8px 24px;
   margin: 16px 0 24px;
-  color: #333;
+  color: var(--color-ink);
   font-size: 0.9rem;
 }
 
@@ -155,8 +155,8 @@
 .triage-section,
 .referral-section,
 .referral-history {
-  background: #fff;
-  border: 1px solid #e2e6ea;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 24px;
@@ -166,7 +166,7 @@
 .referral-history h2 {
   font-size: 1rem;
   margin: 0 0 16px;
-  color: #1a2333;
+  color: var(--color-ink);
 }
 
 .referral-section textarea {
@@ -184,18 +184,18 @@
 }
 
 .status-pending {
-  background: #eceff1;
-  color: #555;
+  background: var(--color-surface-alt);
+  color: var(--color-ink-muted);
 }
 
 .status-acknowledged {
-  background: #e3edff;
-  color: #1e50c9;
+  background: color-mix(in srgb, var(--color-primary) 15%, white);
+  color: var(--color-primary);
 }
 
 .status-completed {
-  background: #e6f4ea;
-  color: #1a7f37;
+  background: color-mix(in srgb, var(--color-urgency-low) 15%, white);
+  color: var(--color-urgency-low);
 }
 
 .referral-list {
@@ -206,7 +206,7 @@
 
 .referral-list-item {
   padding: 12px 0;
-  border-bottom: 1px solid #f0f2f4;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .referral-list-item:last-child {
@@ -223,23 +223,23 @@
 
 .referral-list-facility {
   font-weight: 600;
-  color: #1a2333;
+  color: var(--color-ink);
 }
 
 .referral-list-reason {
-  color: #444;
+  color: var(--color-ink-muted);
   margin: 4px 0;
 }
 
 .referral-list-date {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--color-ink-muted);
 }
 
 .referral-followup-note {
   margin: 6px 0 0;
   font-size: 0.8rem;
-  color: #888;
+  color: var(--color-ink-muted);
   font-style: italic;
 }
 
@@ -252,11 +252,11 @@
 
 .referral-status-label {
   font-size: 0.75rem;
-  color: #888;
+  color: var(--color-ink-muted);
 }
 
 .referral-list-referred-by {
-  color: #444;
+  color: var(--color-ink-muted);
   margin: 4px 0;
   font-size: 0.85rem;
 }
@@ -279,8 +279,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.5px;
-  color: #6d28d9;
-  background: #f1e9fe;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, white);
   white-space: nowrap;
 }
 
@@ -294,7 +294,7 @@
   background: none;
   border: none;
   padding: 0;
-  color: #3366ff;
+  color: var(--color-primary);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -305,14 +305,14 @@
 }
 
 .referral-status-actions button:disabled {
-  color: #a3b3e0;
+  color: color-mix(in srgb, var(--color-primary) 45%, white);
   cursor: not-allowed;
 }
 
 .reports-section,
 .reports-list {
-  background: #fff;
-  border: 1px solid #e2e6ea;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 24px;
@@ -322,7 +322,7 @@
 .reports-list h2 {
   font-size: 1rem;
   margin: 0 0 16px;
-  color: #1a2333;
+  color: var(--color-ink);
 }
 
 .reports-section .field input[type='file'] {
@@ -340,7 +340,7 @@
 .report-card {
   display: flex;
   gap: 16px;
-  border: 1px solid #f0f2f4;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   padding: 12px;
 }
@@ -360,23 +360,23 @@
 
 .report-summary {
   margin: 0 0 8px;
-  color: #333;
+  color: var(--color-ink);
 }
 
 .patient-symptoms p {
   margin: 8px 0 0;
-  color: #444;
+  color: var(--color-ink-muted);
   white-space: pre-wrap;
 }
 
 .triage-reason {
   margin: 12px 0 4px;
-  color: #333;
+  color: var(--color-ink);
 }
 
 .triage-note {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--color-ink-muted);
   margin: 0;
 }
 
@@ -385,18 +385,18 @@
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  background: #3366ff;
+  background: var(--color-primary);
   border: none;
   border-radius: 8px;
   cursor: pointer;
 }
 
 .primary-button:hover:not(:disabled) {
-  background: #2952cc;
+  background: var(--color-primary-hover);
 }
 
 .primary-button:disabled {
-  background: #a3b3e0;
+  background: color-mix(in srgb, var(--color-primary) 45%, white);
   cursor: not-allowed;
 }
 
@@ -409,12 +409,12 @@
 .patient-info-note {
   margin: -12px 0 24px;
   font-size: 0.8rem;
-  color: #888;
+  color: var(--color-ink-muted);
 }
 
 .scheme-check-section {
-  background: #fff;
-  border: 1px solid #e2e6ea;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 24px;
@@ -423,11 +423,11 @@
 .scheme-check-section h2 {
   font-size: 1rem;
   margin: 0 0 16px;
-  color: #1a2333;
+  color: var(--color-ink);
 }
 
 .scheme-suggestion-card {
-  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface, #fff));
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
   border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
   border-radius: 8px;
   padding: 14px 16px;
@@ -435,7 +435,7 @@
 
 .scheme-suggestion-text {
   margin: 0 0 8px;
-  color: var(--color-ink, #333);
+  color: var(--color-ink);
   line-height: 1.5;
 }
 

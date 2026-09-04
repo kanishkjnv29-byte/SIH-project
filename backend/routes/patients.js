@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import { supabase } from '../lib/supabaseClient.js';
 import { authenticate } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
 import {
   triageModel,
   buildTriagePrompt,
@@ -34,7 +35,7 @@ const upload = multer({
   },
 });
 
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, asyncHandler(async (req, res) => {
   const { name, age, gender, phone, village, symptoms } = req.body || {};
 
   if (typeof name !== 'string' || !name.trim()) {
@@ -81,9 +82,9 @@ router.post('/', authenticate, async (req, res) => {
   }
 
   return res.status(201).json(inserted);
-});
+}));
 
-router.get('/', authenticate, async (req, res) => {
+router.get('/', authenticate, asyncHandler(async (req, res) => {
   const { data, error } = await supabase
     .from('patients')
     .select('*, created_by_worker:health_workers(name)')
@@ -100,9 +101,9 @@ router.get('/', authenticate, async (req, res) => {
   }));
 
   return res.json(patients);
-});
+}));
 
-router.get('/:id', authenticate, async (req, res) => {
+router.get('/:id', authenticate, asyncHandler(async (req, res) => {
   const { data, error } = await supabase
     .from('patients')
     .select('*, created_by_worker:health_workers(name)')
@@ -119,9 +120,9 @@ router.get('/:id', authenticate, async (req, res) => {
 
   const { created_by_worker, ...patient } = data;
   return res.json({ ...patient, created_by_name: created_by_worker?.name || null });
-});
+}));
 
-router.post('/:id/triage', authenticate, async (req, res) => {
+router.post('/:id/triage', authenticate, asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const { data: patient, error: fetchError } = await supabase
@@ -172,9 +173,9 @@ router.post('/:id/triage', authenticate, async (req, res) => {
 
   const { created_by_worker, ...patientData } = updated;
   return res.json({ ...patientData, created_by_name: created_by_worker?.name || null });
-});
+}));
 
-router.post('/:id/scheme-check', authenticate, async (req, res) => {
+router.post('/:id/scheme-check', authenticate, asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const { data: patient, error: fetchError } = await supabase
@@ -216,9 +217,9 @@ router.post('/:id/scheme-check', authenticate, async (req, res) => {
 
   const { created_by_worker, ...patientData } = updated;
   return res.json({ ...patientData, created_by_name: created_by_worker?.name || null });
-});
+}));
 
-router.get('/:id/referrals', authenticate, async (req, res) => {
+router.get('/:id/referrals', authenticate, asyncHandler(async (req, res) => {
   const { data, error } = await supabase
     .from('referrals')
     .select(
@@ -247,7 +248,7 @@ router.get('/:id/referrals', authenticate, async (req, res) => {
   });
 
   return res.json(referrals);
-});
+}));
 
 router.post(
   '/:id/reports',
@@ -260,7 +261,7 @@ router.post(
       next();
     });
   },
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
 
     if (!req.file) {
@@ -330,10 +331,10 @@ router.post(
     }
 
     return res.status(201).json({ ...inserted, signed_url: signedUrlData?.signedUrl || null });
-  }
+  })
 );
 
-router.get('/:id/reports', authenticate, async (req, res) => {
+router.get('/:id/reports', authenticate, asyncHandler(async (req, res) => {
   const { data, error } = await supabase
     .from('patient_reports')
     .select('*')
@@ -360,6 +361,6 @@ router.get('/:id/reports', authenticate, async (req, res) => {
   );
 
   return res.json(reportsWithUrls);
-});
+}));
 
 export default router;

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { supabase } from '../lib/supabaseClient.js';
 import { authenticate } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
 
@@ -15,7 +16,7 @@ function addDaysAsDateString(days) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, asyncHandler(async (req, res) => {
   const { patient_id, facility_id, reason } = req.body || {};
 
   if (typeof patient_id !== 'string' || !patient_id.trim()) {
@@ -108,9 +109,9 @@ router.post('/', authenticate, async (req, res) => {
     referral_created: true,
     followup_created: !followUpError,
   });
-});
+}));
 
-router.patch('/:id/status', authenticate, async (req, res) => {
+router.patch('/:id/status', authenticate, asyncHandler(async (req, res) => {
   const { status } = req.body || {};
   const { id } = req.params;
 
@@ -173,6 +174,6 @@ router.patch('/:id/status', authenticate, async (req, res) => {
     facility_name: facilityData?.name || null,
     facility_type: facilityData?.type || null,
   });
-});
+}));
 
 export default router;
